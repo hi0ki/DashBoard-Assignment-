@@ -1,7 +1,7 @@
 
 import { User } from '../types';
 
-const STORAGE_KEY_USER = 'nexus_user';
+const STORAGE_KEY_USER = '_user';
 
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
@@ -19,7 +19,9 @@ export const authService = {
       avatar: `https://ui-avatars.com/api/?name=${name}&background=random`
     };
 
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
+    }
     return user;
   },
 
@@ -34,18 +36,23 @@ export const authService = {
       avatar: `https://ui-avatars.com/api/?name=${name}&background=random`
     };
     
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
+    }
     return user;
   },
 
   logout: async (): Promise<void> => {
-    localStorage.removeItem(STORAGE_KEY_USER);
-    // Force reload to clear any in-memory states
-    window.location.hash = '#/login';
-    window.location.reload(); 
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY_USER);
+      // Force reload to clear any in-memory states
+      window.location.hash = '#/login';
+      window.location.reload();
+    }
   },
 
   getUser: (): User | null => {
+    if (typeof window === 'undefined') return null;
     const stored = localStorage.getItem(STORAGE_KEY_USER);
     return stored ? JSON.parse(stored) : null;
   },
@@ -56,7 +63,9 @@ export const authService = {
     if (!user.avatar) {
       user.avatar = `https://ui-avatars.com/api/?name=${user.name}&background=random`;
     }
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
+    }
     return user;
   }
 };

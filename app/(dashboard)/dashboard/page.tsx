@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '../../../components/UI';
 import { dataService } from '../../../services/dataService';
-import { authService } from '../../../services/authService';
+import { useUser } from '@clerk/nextjs';
 import { Users, Building2, TrendingUp, MapPin } from 'lucide-react';
-import { User } from '../../../types';
 
 const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any) => {
   const isPositive = changeType === 'positive';
@@ -39,22 +38,21 @@ const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any
 };
 
 export default function Dashboard() {
+  const { user: clerkUser } = useUser();
   const [usage, setUsage] = useState({ count: 0, total: 0 });
   const [stats, setStats] = useState({ 
     population: 0, 
     agenciesCount: 0, 
     contactsCount: 0 
   });
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const loadDashboardData = async () => {
-      const [agencies, contacts, usageStats, currentUser] = await Promise.all([
+      const [agencies, contacts, usageStats] = await Promise.all([
         dataService.getAgencies(),
         dataService.getContacts(),
-        dataService.getUsageStats(),
-        authService.getUser()
+        dataService.getUsageStats()
       ]);
 
       const totalPopulation = agencies.reduce((acc, curr) => acc + (curr.population || 0), 0);
@@ -65,7 +63,6 @@ export default function Dashboard() {
         contactsCount: contacts.length
       });
       setUsage(usageStats);
-      setUser(currentUser);
       setLoading(false);
     };
 
@@ -83,7 +80,11 @@ export default function Dashboard() {
       {/* Header Section */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p className="text-gray-500 dark:text-gray-400">Welcome back, {user?.name || 'User'}</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          Welcome back, {clerkUser?.firstName && clerkUser?.lastName 
+            ? `${clerkUser.firstName} ${clerkUser.lastName}` 
+            : clerkUser?.firstName || clerkUser?.username || 'User'}
+        </p>
       </div>
 
       {/* Stats Grid */}

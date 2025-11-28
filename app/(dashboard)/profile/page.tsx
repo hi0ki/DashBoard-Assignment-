@@ -2,28 +2,31 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Input } from '../../../components/UI';
-import { authService } from '../../../services/authService';
-import { User } from '../../../types';
+import { useUser } from '@clerk/nextjs';
 import { Upload } from 'lucide-react';
 
 export default function Profile() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, isLoaded } = useUser();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [previewImage, setPreviewImage] = useState<string>('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [profileImage, setProfileImage] = useState<string>('');
 
   useEffect(() => {
-    const userData = authService.getUser();
-    setUser(userData);
-    if (userData?.avatar) setPreviewImage(userData.avatar);
-  }, []);
+    if (user) {
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setProfileImage((user.publicMetadata?.profileImage as string) || '');
+    }
+  }, [user]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
+        setProfileImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -35,30 +38,32 @@ export default function Profile() {
     
     setLoading(true);
     setMessage('');
-    
-    const formData = new FormData(e.currentTarget);
-    
-    const updatedUser: User = {
-      ...user,
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      // Use the preview image (Base64) if changed, otherwise fallback to existing
-      avatar: previewImage || user.avatar, 
-    };
 
     try {
-      await authService.updateProfile(updatedUser);
-      setUser(updatedUser);
+      await user.update({
+        firstName: firstName,
+        lastName: lastName,
+        publicMetadata: {
+          ...user.publicMetadata,
+          profileImage: profileImage
+        }
+      });
+      
       setMessage('Profile updated successfully!');
-      // Force reload to update header immediately
-      setTimeout(() => window.location.reload(), 500);
     } catch (err) {
       setMessage('Failed to update profile.');
+    } finally {
       setLoading(false);
     }
   };
 
-  if (!user) return null;
+  if (!isLoaded || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -78,11 +83,13 @@ export default function Profile() {
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <div className="flex flex-col items-center space-y-4">
                 <div className="relative h-32 w-32 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-md group">
-                  {previewImage ? (
-                    <img src={previewImage} alt="Profile" className="h-full w-full object-cover" />
+                  {profileImage ? (
+                    <img src={profileImage} alt="Profile" className="h-full w-full object-cover" />
+                  ) : user.imageUrl ? (
+                    <img src={user.imageUrl} alt="Profile" className="h-full w-full object-cover" />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-4xl font-bold text-gray-400">
-                      {user.name?.charAt(0)}
+                      {user.firstName?.charAt(0) || user.username?.charAt(0) || 'U'}
                     </div>
                   )}
                   
@@ -91,7 +98,7 @@ export default function Profile() {
                     <span className="text-white text-xs font-medium">Change</span>
                   </div>
                   
-                  {/* Hidden file input strictly positioned over the image area */}
+                  {/* Hidden file input */}
                   <input 
                     type="file" 
                     accept="image/*" 
@@ -102,7 +109,7 @@ export default function Profile() {
                 
                 <div className="text-center">
                     <button type="button" className="relative text-sm text-primary-600 font-medium hover:text-primary-500">
-                        <span>Upload new photo</span>
+                        <span>Change Profile Picture</span>
                         <input 
                             type="file" 
                             accept="image/*" 
@@ -111,19 +118,32 @@ export default function Profile() {
                         />
                     </button>
                     <p className="text-xs text-gray-500 mt-1">JPG, GIF or PNG. Max 1MB.</p>
+                    <p className="text-xs text-gray-400 mt-1">Default: Gmail profile picture</p>
                 </div>
             </div>
             
             <div className="flex-1 w-full space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Full Name
+                    First Name
                   </label>
                   <Input 
-                    name="name" 
-                    defaultValue={user.name} 
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     required 
-                    placeholder="John Doe"
+                    placeholder="John"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Last Name
+                  </label>
+                  <Input 
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required 
+                    placeholder="Doe"
                   />
                 </div>
 
@@ -132,11 +152,11 @@ export default function Profile() {
                     Email Address
                   </label>
                   <Input 
-                    name="email" 
-                    type="email" 
-                    defaultValue={user.email} 
-                    required 
+                    value={user.primaryEmailAddress?.emailAddress || 'No email'}
+                    disabled
+                    className="bg-gray-50 dark:bg-gray-800 cursor-not-allowed opacity-60"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Email cannot be changed here. Manage it in your Google account.</p>
                 </div>
             </div>
           </div>

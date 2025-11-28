@@ -62,8 +62,8 @@ const CONTACTS_DATA = generateContacts(1203, AGENCIES_DATA);
 
 // --- Limit Tracking ---
 
-const STORAGE_KEY_LIMIT = 'nexus_daily_limit';
-const STORAGE_KEY_UNLOCKED = 'nexus_unlocked_contacts';
+const STORAGE_KEY_LIMIT = 'InfinitiveByt_daily_limit';
+const STORAGE_KEY_UNLOCKED = 'InfinitiveByt_unlocked_contacts';
 
 interface LimitState {
   date: string;

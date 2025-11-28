@@ -2,19 +2,21 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-// import { authService } from '../lib/auth';
+import { useUser } from '@clerk/nextjs';
 
 export default function Home() {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
 
   useEffect(() => {
-    const user = authService.getUser();
-    if (user) {
-      router.replace('/dashboard');
-    } else {
-      router.replace('/login');
+    if (isLoaded) {
+      if (user) {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/login');
+      }
     }
-  }, [router]);
+  }, [isLoaded, user, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -22,3 +24,4 @@ export default function Home() {
     </div>
   );
 }
+

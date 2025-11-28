@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { useUser, useClerk } from '@clerk/nextjs';
 import { 
   LayoutDashboard, 
   Building2, 
@@ -14,9 +15,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { authService } from '../../services/authService';
 import { APP_NAME } from '../../constants';
-import { User } from '../../types';
 
 const SidebarItem = ({ href, icon: Icon, label, onClick }: { href: string, icon: any, label: string, onClick?: () => void }) => {
   const pathname = usePathname();
@@ -39,23 +38,14 @@ const SidebarItem = ({ href, icon: Icon, label, onClick }: { href: string, icon:
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
   const router = useRouter();
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
 
-  // Check auth on mount and route change
-  useEffect(() => {
-    const currentUser = authService.getUser();
-    if (!currentUser) {
-      router.push('/login');
-    } else {
-      setUser(currentUser);
-    }
-  }, [router, pathname]);
-
-  // Handle Dark Mode
+  // Handle Dark Mode - MUST be before conditional returns
   useEffect(() => {
     // Check system or saved preference
     const stored = localStorage.getItem('theme');
@@ -83,8 +73,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const handleLogout = async () => {
-    await authService.logout();
+    await signOut();
+    router.push('/');
   };
+
+  // Redirect if not authenticated - with delay to allow for auth completion
+  useEffect(() => {
+    if (isLoaded && !user) {
+      // Add a small delay to allow authentication to complete
+      const timeoutId = setTimeout(() => {
+        if (!user) {
+          router.push('/login');
+        }
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isLoaded, user, router]);
+
+  // Show loading while checking authentication
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Don't render if user is not authenticated
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -150,15 +169,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             <div className="flex items-center space-x-3">
-              <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {user?.name}
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
+                {user?.firstName && user?.lastName 
+                  ? `${user.firstName} ${user.lastName}` 
+                  : user?.firstName || user?.username || 'User'}
               </span>
               <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border border-gray-200 dark:border-gray-700">
-                {user?.avatar ? (
-                   <img src={user.avatar} alt="Profile" className="h-full w-full object-cover" />
+                {user?.publicMetadata?.profileImage ? (
+                   <img src={user.publicMetadata.profileImage as string} alt="Profile" className="h-full w-full object-cover" />
+                ) : user?.imageUrl ? (
+                   <img src={user.imageUrl} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-sm">
-                    {user?.name?.charAt(0).toUpperCase()}
+                    {user?.firstName?.charAt(0).toUpperCase() || user?.username?.charAt(0).toUpperCase() || 'U'}
                   </div>
                 )}
               </div>
