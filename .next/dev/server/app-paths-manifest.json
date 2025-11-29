@@ -1,6 +1,7 @@
 {
-  "/auth/login/page": "app/auth/login/page.js",
-  "/auth/page": "app/auth/page.js",
-  "/auth/register/page": "app/auth/register/page.js",
-  "/page": "app/page.js"
+  "/(dashboard)/contacts/page": "app/(dashboard)/contacts/page.js",
+  "/(dashboard)/profile/page": "app/(dashboard)/profile/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/contacts/route": "app/api/contacts/route.js",
+  "/api/profile/route": "app/api/profile/route.js"
 }

@@ -21,6 +21,7 @@ interface Contact {
   phone?: string;
   agency?: string;
   position?: string;
+  department?: string;
   isViewed: boolean;
   viewedAt?: string;
 }
@@ -45,7 +46,7 @@ export default function ContactsPage() {
     page: 1,
     pages: 1,
     total: 0,
-    limit: 10
+    limit: 15
   });
 
   const loadContacts = async (tab: 'viewed' | 'unviewed', page: number = 1) => {
@@ -55,7 +56,7 @@ export default function ContactsPage() {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10',
+        limit: '15',
         viewed: (tab === 'viewed').toString()
       });
       
@@ -133,6 +134,10 @@ export default function ContactsPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  const totalPages = pagination.pages;
+  const startIndex = (currentPage - 1) * pagination.limit;
+  const endIndex = Math.min(startIndex + pagination.limit, pagination.total);
+
   if (loading && contacts.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -143,22 +148,26 @@ export default function ContactsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
-        <p className="text-gray-500 dark:text-gray-400">
-          Manage and view your contacts. You can view {remaining} new contacts today.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
+          <p className="text-gray-500 dark:text-gray-400">Access contact details of your network</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            Showing {startIndex + 1}-{Math.min(endIndex, pagination.total)} of {pagination.total} contacts (Page {currentPage} of {totalPages})
+          </p>
+        </div>
+        
+        <div className="flex flex-col items-end gap-2">
+          <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'}`}>
+            Credits Remaining: {remaining}
+          </span>
+          {limitError && (
+            <span className="text-xs text-red-600 animate-pulse">
+              {limitError}
+            </span>
+          )}
+        </div>
       </div>
-
-      {/* Error Message */}
-      {limitError && (
-        <Card className="p-4 border-red-200 bg-red-50 dark:bg-red-900/20">
-          <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
-            <AlertTriangle size={20} />
-            <span>{limitError}</span>
-          </div>
-        </Card>
-      )}
 
       {/* Tabs */}
       <div className="flex space-x-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg w-fit">
@@ -197,115 +206,158 @@ export default function ContactsPage() {
         />
       </div>
 
-      {/* Contacts List */}
-      <div className="grid gap-4">
-        {loading ? (
-          <Card className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-500 dark:text-gray-400">Loading contacts...</p>
-          </Card>
-        ) : contacts.length === 0 ? (
-          <Card className="p-8 text-center">
-            <div className="text-gray-500 dark:text-gray-400">
-              {activeTab === 'viewed' ? 'No contacts viewed yet' : 'No unviewed contacts available'}
-            </div>
-          </Card>
-        ) : (
-          contacts.map((contact) => (
-            <Card key={contact.id} className="p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {contact.name}
-                    </h3>
-                    {contact.isViewed && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                        <Eye size={12} className="mr-1" />
-                        Viewed
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400">
-                    {contact.email && (
-                      <div>
-                        <span className="font-medium">Email:</span> 
-                        <span className="ml-2">{contact.email}</span>
-                      </div>
-                    )}
-                    {contact.phone && (
-                      <div>
-                        <span className="font-medium">Phone:</span>
-                        <span className="ml-2">{contact.phone}</span>
-                      </div>
-                    )}
-                    {contact.agency && (
-                      <div>
-                        <span className="font-medium">Agency:</span> 
-                        <span className="ml-2">{contact.agency}</span>
-                      </div>
-                    )}
-                    {contact.position && (
-                      <div>
-                        <span className="font-medium">Position:</span> 
-                        <span className="ml-2">{contact.position}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {contact.viewedAt && (
-                    <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                      Viewed on {new Date(contact.viewedAt).toLocaleDateString()}
-                    </div>
-                  )}
-                </div>
-
-                {!contact.isViewed && (
-                  <Button
-                    onClick={() => handleViewContact(contact.id)}
-                    variant="outline"
-                    className="ml-4"
-                  >
-                    <Eye size={16} className="mr-2" />
-                    View Contact
-                  </Button>
-                )}
-              </div>
-            </Card>
-          ))
-        )}
-      </div>
-
-      {/* Pagination */}
-      {pagination.pages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} contacts
-          </div>
-          <div className="flex items-center gap-2">
+      <Card className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Job Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Department</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Contact Info</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Action</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    Loading contacts...
+                  </td>
+                </tr>
+              ) : contacts.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    {activeTab === 'viewed' ? 'No contacts viewed yet' : 'No unviewed contacts available'}
+                  </td>
+                </tr>
+              ) : (
+                contacts.map((contact) => {
+                  const isViewed = contact.isViewed;
+                  return (
+                    <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        {contact.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {contact.position}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {contact.department}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm">
+                          {isViewed ? (
+                            <div className="space-y-1">
+                              <p className="text-gray-900 dark:text-white select-all">{contact.email}</p>
+                              <p className="text-gray-500 dark:text-gray-400 select-all">{contact.phone}</p>
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-gray-400">
+                              <span className="tracking-widest">••••••••••••••••</span>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Button 
+                          variant={isViewed ? "outline" : "primary"}
+                          className={`text-xs px-3 py-1.5 h-auto ${isViewed ? 'cursor-default opacity-75' : ''}`}
+                          onClick={() => handleViewContact(contact.id)}
+                          disabled={isViewed || remaining <= 0}
+                        >
+                          {isViewed ? (
+                            <>
+                              <EyeOff size={14} className="mr-1.5" />
+                              Revealed
+                            </>
+                          ) : (
+                            <>
+                              <Eye size={14} className="mr-1.5" />
+                              View
+                            </>
+                          )}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+      
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
             <Button
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
               variant="outline"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="flex items-center gap-2"
             >
               <ChevronLeft size={16} />
               Previous
             </Button>
-            <span className="px-3 py-1 text-sm">
-              Page {pagination.page} of {pagination.pages}
-            </span>
+            
+            <div className="flex items-center gap-2">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+                
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "primary" : "outline"}
+                    onClick={() => handlePageChange(pageNum)}
+                    className="w-10 h-10 p-0"
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              
+              {totalPages > 5 && currentPage < totalPages - 2 && (
+                <>
+                  <span className="text-gray-500">...</span>
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePageChange(totalPages)}
+                    className="w-10 h-10 p-0"
+                  >
+                    {totalPages}
+                  </Button>
+                </>
+              )}
+            </div>
+            
             <Button
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page === pagination.pages}
               variant="outline"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-2"
             >
               Next
               <ChevronRight size={16} />
             </Button>
           </div>
-        </div>
+        </Card>
       )}
+      
+      <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-600 mt-4">
+        <AlertTriangle size={12} />
+        <span>Clicking "View" will consume 1 credit and move contact to viewed section.</span>
+      </div>
     </div>
   );
 }
