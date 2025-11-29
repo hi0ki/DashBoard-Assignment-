@@ -141,7 +141,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {!isLoaded ? 'Loading authentication...' : 'Setting up your dashboard...'}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-            This may take a few moments for new accounts
+            This may take a few moments. Thank you for your patience.
           </p>
         </div>
       </div>
