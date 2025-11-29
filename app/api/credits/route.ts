@@ -28,16 +28,22 @@ export async function GET(request: NextRequest) {
         }
       });
     } else {
-      // TEMPORARY: Force reset for testing
-      console.log('DEBUG - Found user, forcing reset');
-      userProfile = await prisma.userProfile.update({
-        where: { clerkUserId: userId },
-        data: {
-          remaining: 50,
-          lastResetDate: new Date()
-        }
-      });
-      console.log('DEBUG - After forced reset, remaining:', userProfile.remaining);
+      // Check if user needs daily reset
+      const lastReset = userProfile.lastResetDate ? new Date(userProfile.lastResetDate) : null;
+      
+      // If user has no lastResetDate OR lastResetDate is before today's 12:40 AM, reset credits
+      // Since it's currently after 12:40 AM today, anyone who hasn't been reset since today's 12:40 AM should get reset
+      const needsReset = !lastReset || lastReset < todayReset;
+      
+      if (needsReset) {
+        userProfile = await prisma.userProfile.update({
+          where: { clerkUserId: userId },
+          data: {
+            remaining: 50,
+            lastResetDate: new Date()
+          }
+        });
+      }
     }
 
     return NextResponse.json({
