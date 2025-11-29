@@ -18,8 +18,11 @@ export async function GET(request: NextRequest) {
       where: { clerkUserId: userId }
     });
 
+    console.log('DEBUG - Found existing user profile:', !!userProfile);
+
     // Create profile if it doesn't exist
     if (!userProfile) {
+      console.log('DEBUG - Creating new user profile');
       userProfile = await prisma.userProfile.create({
         data: {
           clerkUserId: userId,
@@ -27,6 +30,7 @@ export async function GET(request: NextRequest) {
           lastResetDate: new Date()
         }
       });
+      console.log('DEBUG - New user created with remaining:', userProfile.remaining);
     } else {
       // Check if user needs daily reset
       const lastReset = userProfile.lastResetDate ? new Date(userProfile.lastResetDate) : null;
