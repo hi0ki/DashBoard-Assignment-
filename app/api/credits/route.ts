@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get today's reset time (12:40 PM)
+    // Get today's reset time (12:40 AM)
     const todayReset = new Date();
-    todayReset.setHours(12, 40, 0, 0);
+    todayReset.setHours(0, 40, 0, 0);
     
-    // If current time is before 12:40 today, the last valid reset was yesterday at 12:40
+    // If current time is before 12:40 AM today, the last valid reset was yesterday at 12:40 AM
     const now = new Date();
     if (now < todayReset) {
       todayReset.setDate(todayReset.getDate() - 1);

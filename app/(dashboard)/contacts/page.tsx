@@ -193,13 +193,13 @@ export default function ContactsPage() {
             </span>
             {remaining === 0 && (
               <div className="text-xs text-blue-600 dark:text-blue-400 mt-1 text-right">
-                <span className="block">Credits reset daily at 12:40 PM</span>
+                <span className="block">Credits reset daily at 12:40 AM</span>
                 <span className="text-gray-500 dark:text-gray-400">
                   Next reset: {(() => {
                     const nextReset = new Date();
-                    nextReset.setHours(12, 40, 0, 0);
+                    nextReset.setHours(0, 40, 0, 0);
                     
-                    // If current time is after 12:40 today, next reset is tomorrow at 12:40
+                    // If current time is after 12:40 AM today, next reset is tomorrow at 12:40 AM
                     if (new Date() >= nextReset) {
                       nextReset.setDate(nextReset.getDate() + 1);
                     }
