@@ -191,6 +191,22 @@ export default function ContactsPage() {
             <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'}`}>
               Credits Remaining: {remaining}
             </span>
+            {remaining === 0 && (
+              <div className="text-xs text-blue-600 dark:text-blue-400 mt-1 text-right">
+                <span className="block">Credits reset daily at midnight</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  Next reset: {(() => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(0, 0, 0, 0);
+                    const timeUntilReset = tomorrow.getTime() - new Date().getTime();
+                    const hoursUntilReset = Math.floor(timeUntilReset / (1000 * 60 * 60));
+                    const minutesUntilReset = Math.floor((timeUntilReset % (1000 * 60 * 60)) / (1000 * 60));
+                    return `${hoursUntilReset}h ${minutesUntilReset}m`;
+                  })()}
+                </span>
+              </div>
+            )}
             {error && (
               <span className="text-xs text-red-600 mt-1 max-w-[200px] text-right">
                 {error}
