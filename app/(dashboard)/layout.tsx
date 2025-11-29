@@ -261,13 +261,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   ? `${user.firstName} ${user.lastName}` 
                   : user?.firstName || user?.username || 'User'}
               </span>
-              <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="h-12 w-12 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
                 {dbProfileImage ? (
                    <img src={dbProfileImage} alt="Profile" className="h-full w-full object-cover" />
                 ) : user?.imageUrl ? (
                    <img src={user.imageUrl} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-sm">
+                  <div className="h-full w-full flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-lg">
                     {user?.firstName?.charAt(0).toUpperCase() || user?.username?.charAt(0).toUpperCase() || 'U'}
                   </div>
                 )}
