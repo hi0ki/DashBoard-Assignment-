@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,13 +31,13 @@ export async function GET(request: NextRequest) {
 
     // Filter by view status
     if (viewed) {
-      whereClause.ContactView = {
+      whereClause.views = {
         some: {
           clerkUserId: userId
         }
       };
     } else {
-      whereClause.ContactView = {
+      whereClause.views = {
         none: {
           clerkUserId: userId
         }
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       prisma.contact.findMany({
         where: whereClause,
         include: {
-          ContactView: {
+          views: {
             where: { clerkUserId: userId },
             select: { viewedAt: true }
           }
@@ -68,8 +68,9 @@ export async function GET(request: NextRequest) {
       phone: contact.phone,
       agency: contact.agency,
       position: contact.position,
-      isViewed: contact.ContactView.length > 0,
-      viewedAt: contact.ContactView[0]?.viewedAt?.toISOString() || null,
+      department: contact.department,
+      isViewed: contact.views.length > 0,
+      viewedAt: contact.views[0]?.viewedAt?.toISOString() || null,
     }));
 
     // Get remaining views for today
