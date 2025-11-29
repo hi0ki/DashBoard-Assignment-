@@ -126,7 +126,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if (user) {
         setIsInitializing(false);
       } else if (!isSignedIn) {
-        router.replace('/register');
+        router.replace('/auth');
       }
     }
   }, [user, isLoaded, isSignedIn, hasCheckedAuth, router]);
