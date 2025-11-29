@@ -9,9 +9,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get today's date at midnight
+    // Get today's reset time (12:30 PM)
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(12, 30, 0, 0);
+    
+    // If current time is before 12:30 today, use yesterday's reset time
+    const now = new Date();
+    if (now < today) {
+      today.setDate(today.getDate() - 1);
+    }
 
     // Get user profile to check remaining credits
     let userProfile = await prisma.userProfile.findUnique({
