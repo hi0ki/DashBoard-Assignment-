@@ -9,14 +9,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get today's reset time (12:30 PM)
-    const today = new Date();
-    today.setHours(12, 30, 0, 0);
+    // Get today's reset time (12:40 PM)
+    const todayReset = new Date();
+    todayReset.setHours(12, 40, 0, 0);
     
-    // If current time is before 12:30 today, use yesterday's reset time
+    // If current time is before 12:40 today, the last valid reset was yesterday at 12:40
     const now = new Date();
-    if (now < today) {
-      today.setDate(today.getDate() - 1);
+    if (now < todayReset) {
+      todayReset.setDate(todayReset.getDate() - 1);
     }
 
     // Get user profile to check remaining credits
@@ -30,21 +30,21 @@ export async function GET(request: NextRequest) {
         data: {
           clerkUserId: userId,
           remaining: 50,
-          lastResetDate: today
+          lastResetDate: todayReset
         }
       });
     } else {
       // Check if user needs daily reset
       const lastReset = new Date(userProfile.lastResetDate);
-      lastReset.setHours(0, 0, 0, 0);
       
-      if (lastReset < today) {
+      // Only reset if lastResetDate is before today's reset time
+      if (lastReset < todayReset) {
         // User needs daily reset
         userProfile = await prisma.userProfile.update({
           where: { clerkUserId: userId },
           data: {
             remaining: 50,
-            lastResetDate: today
+            lastResetDate: todayReset
           }
         });
       }
