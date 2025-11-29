@@ -197,9 +197,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-400">
-            {APP_NAME}
-          </span>
+          <div className="flex items-center space-x-3">
+            {/* Logo Icon */}
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-sm">∞</span>
+            </div>
+            {/* Brand Text */}
+            <div className="flex flex-col">
+              <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+                InfiniteByte
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1">
+                Dashboard
+              </span>
+            </div>
+          </div>
           <button 
             onClick={() => setSidebarOpen(false)} 
             className="lg:hidden p-1 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
