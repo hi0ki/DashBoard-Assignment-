@@ -12,8 +12,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Get today's date at midnight
+    // Get today's reset time (12:30 PM)
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(12, 30, 0, 0);
 
     // Find all users who haven't been reset today
     const usersToReset = await prisma.userProfile.findMany({
