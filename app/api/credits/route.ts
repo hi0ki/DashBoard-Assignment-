@@ -9,10 +9,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get today's date at midnight
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     // Get user profile to check remaining credits
     let userProfile = await prisma.userProfile.findUnique({
-      where: { clerkUserId: userId },
-      select: { remaining: true }
+      where: { clerkUserId: userId }
     });
 
     // Create profile if it doesn't exist
@@ -20,10 +23,25 @@ export async function GET(request: NextRequest) {
       userProfile = await prisma.userProfile.create({
         data: {
           clerkUserId: userId,
-          remaining: 50
-        },
-        select: { remaining: true }
+          remaining: 50,
+          lastResetDate: today
+        }
       });
+    } else {
+      // Check if user needs daily reset
+      const lastReset = new Date(userProfile.lastResetDate);
+      lastReset.setHours(0, 0, 0, 0);
+      
+      if (lastReset < today) {
+        // User needs daily reset
+        userProfile = await prisma.userProfile.update({
+          where: { clerkUserId: userId },
+          data: {
+            remaining: 50,
+            lastResetDate: today
+          }
+        });
+      }
     }
 
     return NextResponse.json({
