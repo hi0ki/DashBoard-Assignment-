@@ -16,12 +16,33 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: 'InfinitiveByte Dashboard',
-  description: 'CRM Dashboard for Agencies and Contacts',
+  description: 'Dashboard for Agencies and Contacts',
 }
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        elements: {
+          formButtonPrimary: 'text-white',
+          card: 'shadow-none',
+        },
+      }}
+      localization={{
+        signUp: {
+          start: {
+            title: 'Sign in or create account',
+            subtitle: 'Checking your account...',
+          }
+        },
+        signIn: {
+          start: {
+            title: 'Sign in',
+            subtitle: 'Verifying your account...',
+          }
+        }
+      }}
+    >
       <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           {children}
