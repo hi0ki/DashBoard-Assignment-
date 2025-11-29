@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: 'InfinitiveByte Dashboard',
   description: 'Dashboard for Agencies and Contacts',
+  icons: {
+    icon: '/icon.jpeg',
+    shortcut: '/icon.jpeg',
+    apple: '/icon.jpeg',
+  },
 }
 
 export default function RootLayout({ children }) {

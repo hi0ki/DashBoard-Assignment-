@@ -16,33 +16,26 @@ export async function GET(request: NextRequest) {
     const [
       totalContacts,
       totalAgencies,
-      totalPopulation,
       todayViews,
     ] = await Promise.all([
       prisma.contact.count(),
       prisma.agency.count(),
-      prisma.agency.aggregate({
-        _sum: {
-          population: true,
-        },
-      }),
       prisma.contactView.count({
         where: {
-          userId,
-          createdAt: {
+          clerkUserId: userId,
+          viewedAt: {
             gte: today,
           },
         },
       }),
     ]);
 
-    // Daily limit is 100 views per user
-    const dailyLimit = 100;
+    // Daily limit is 50 views per user
+    const dailyLimit = 50;
 
     return NextResponse.json({
       contacts: totalContacts,
       agencies: totalAgencies,
-      population: totalPopulation._sum.population || 0,
       usage: {
         count: todayViews,
         total: dailyLimit,

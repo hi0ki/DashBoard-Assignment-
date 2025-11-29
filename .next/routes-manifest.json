@@ -67,6 +67,12 @@
       "namedRegex": "^/api/contacts(?:/)?$"
     },
     {
+      "page": "/api/dashboard/stats",
+      "regex": "^/api/dashboard/stats(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/dashboard/stats(?:/)?$"
+    },
+    {
       "page": "/api/import-csv",
       "regex": "^/api/import\\-csv(?:/)?$",
       "routeKeys": {},
@@ -113,6 +119,12 @@
       "regex": "^/dashboard(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/icon.jpeg",
+      "regex": "^/icon\\.jpeg(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/icon\\.jpeg(?:/)?$"
     },
     {
       "page": "/import",
