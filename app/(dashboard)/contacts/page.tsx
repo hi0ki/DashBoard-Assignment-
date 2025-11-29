@@ -86,21 +86,28 @@ export default function ContactsPage() {
     }
   };
 
-  // Load user credits separately
+  // Load user credits directly from database
   const loadUserCredits = async () => {
     if (!clerkUser?.id) return;
     
     try {
-      const response = await fetch('/api/dashboard/stats');
+      const response = await fetch('/api/credits');
       const data = await response.json();
       
-      if (response.ok && data.usage) {
-        setRemaining(data.usage.remaining);
+      if (response.ok) {
+        setRemaining(data.remaining);
       }
     } catch (error) {
       console.error('Error loading user credits:', error);
     }
   };
+
+  // Load credits immediately when user is available
+  useEffect(() => {
+    if (clerkUser?.id) {
+      loadUserCredits();
+    }
+  }, [clerkUser?.id]);
 
   const handleViewContact = async (contactId: string) => {
     try {
