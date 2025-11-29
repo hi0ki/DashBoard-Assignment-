@@ -12,12 +12,6 @@ export async function GET(request: NextRequest) {
     // Get today's reset time (12:40 AM)
     const todayReset = new Date();
     todayReset.setHours(0, 40, 0, 0);
-    
-    // If current time is before 12:40 AM today, the last valid reset was yesterday at 12:40 AM
-    const now = new Date();
-    if (now < todayReset) {
-      todayReset.setDate(todayReset.getDate() - 1);
-    }
 
     // Get user profile to check remaining credits
     let userProfile = await prisma.userProfile.findUnique({
@@ -30,21 +24,21 @@ export async function GET(request: NextRequest) {
         data: {
           clerkUserId: userId,
           remaining: 50,
-          lastResetDate: todayReset
+          lastResetDate: new Date()
         }
       });
     } else {
       // Check if user needs daily reset
-      const lastReset = new Date(userProfile.lastResetDate);
+      const lastReset = userProfile.lastResetDate ? new Date(userProfile.lastResetDate) : null;
       
-      // Only reset if lastResetDate is before today's reset time
-      if (lastReset < todayReset) {
+      // If user has no lastResetDate or lastResetDate is before today's 12:40 AM, reset credits
+      if (!lastReset || lastReset < todayReset) {
         // User needs daily reset
         userProfile = await prisma.userProfile.update({
           where: { clerkUserId: userId },
           data: {
             remaining: 50,
-            lastResetDate: todayReset
+            lastResetDate: new Date()
           }
         });
       }
