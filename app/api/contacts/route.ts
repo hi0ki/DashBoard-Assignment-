@@ -73,18 +73,24 @@ export async function GET(request: NextRequest) {
       viewedAt: contact.views[0]?.viewedAt?.toISOString() || null,
     }));
 
-    // Get remaining views for today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const todayViews = await prisma.contactView.count({
-      where: {
-        clerkUserId: userId,
-        viewedAt: { gte: today }
-      }
+    // Get user profile to check remaining credits
+    const userProfile = await prisma.userProfile.findUnique({
+      where: { clerkUserId: userId }
     });
-    
-    const remainingViews = Math.max(0, 50 - todayViews);
+
+    // If no user profile exists, create one with default 50 remaining
+    let remaining = 50;
+    if (userProfile) {
+      remaining = userProfile.remaining;
+    } else {
+      // Create user profile with default remaining credits
+      await prisma.userProfile.create({
+        data: {
+          clerkUserId: userId,
+          remaining: 50
+        }
+      });
+    }
 
     return NextResponse.json({
       contacts: contactsWithViewStatus,
@@ -94,7 +100,7 @@ export async function GET(request: NextRequest) {
         total,
         pages: Math.ceil(total / limit),
       },
-      remaining: remainingViews,
+      remaining: remaining,
     });
   } catch (error) {
     console.error('Error fetching contacts:', error);

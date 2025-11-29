@@ -38,40 +38,46 @@ export async function POST(
       });
     }
 
-    // Check daily limit (50 new contacts per day)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const viewsToday = await prisma.contactView.count({
-      where: {
-        clerkUserId: userId,
-        viewedAt: {
-          gte: today,
-          lt: tomorrow
-        }
-      }
+    // Get user profile to check remaining views
+    let userProfile = await prisma.userProfile.findUnique({
+      where: { clerkUserId: userId }
     });
 
-    if (viewsToday >= 50) {
+    // Create profile if it doesn't exist
+    if (!userProfile) {
+      userProfile = await prisma.userProfile.create({
+        data: {
+          clerkUserId: userId,
+          remaining: 50
+        }
+      });
+    }
+
+    if (userProfile.remaining <= 0) {
       return NextResponse.json({ 
-        error: 'Daily contact limit reached (50 contacts per day)' 
+        error: 'No remaining views left',
+        remaining: 0
       }, { status: 429 });
     }
 
-    // Create the view record
-    const contactView = await prisma.contactView.create({
-      data: {
-        contactId: contactId,
-        clerkUserId: userId
-      }
-    });
+    // Create the view record and decrement remaining count
+    const [contactView, updatedProfile] = await Promise.all([
+      prisma.contactView.create({
+        data: {
+          contactId: contactId,
+          clerkUserId: userId
+        }
+      }),
+      prisma.userProfile.update({
+        where: { clerkUserId: userId },
+        data: { remaining: userProfile.remaining - 1 }
+      })
+    ]);
 
     return NextResponse.json({
       message: 'Contact marked as viewed',
       viewedAt: contactView.viewedAt,
-      remainingViews: 49 - viewsToday
+      remaining: updatedProfile.remaining
     });
 
   } catch (error) {

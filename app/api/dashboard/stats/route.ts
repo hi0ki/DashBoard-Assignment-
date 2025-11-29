@@ -16,30 +16,26 @@ export async function GET(request: NextRequest) {
     const [
       totalContacts,
       totalAgencies,
-      todayViews,
+      userProfile,
     ] = await Promise.all([
       prisma.contact.count(),
       prisma.agency.count(),
-      prisma.contactView.count({
-        where: {
-          clerkUserId: userId,
-          viewedAt: {
-            gte: today,
-          },
-        },
+      prisma.userProfile.findUnique({
+        where: { clerkUserId: userId }
       }),
     ]);
 
-    // Daily limit is 50 views per user
-    const dailyLimit = 50;
+    // If no user profile, they have default 50 remaining
+    const remaining = userProfile?.remaining || 50;
+    const used = 50 - remaining;
 
     return NextResponse.json({
       contacts: totalContacts,
       agencies: totalAgencies,
       usage: {
-        count: todayViews,
-        total: dailyLimit,
-        remaining: Math.max(0, dailyLimit - todayViews),
+        count: used,
+        total: 50,
+        remaining: remaining,
       },
     });
   } catch (error) {

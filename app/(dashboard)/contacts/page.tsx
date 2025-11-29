@@ -41,7 +41,6 @@ export default function ContactsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('');
   const [remaining, setRemaining] = useState(50);
-  const [limitError, setLimitError] = useState('');
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
     pages: 1,
@@ -92,7 +91,7 @@ export default function ContactsPage() {
       const data = await response.json();
       
       if (response.ok) {
-        setRemaining(data.remainingViews || 0);
+        setRemaining(data.remaining || 0);
         
         // Update the contact in the current list to show as viewed
         setContacts(prevContacts => 
@@ -102,21 +101,18 @@ export default function ContactsPage() {
               : contact
           )
         );
-        
-        setLimitError('');
       } else {
-        setLimitError(data.error || 'Failed to mark contact as viewed');
+        alert(data.error || 'Failed to mark contact as viewed');
       }
     } catch (error) {
       console.error('Error viewing contact:', error);
-      setLimitError('Network error occurred');
+      alert('Network error occurred');
     }
   };
 
   const handleTabChange = (tab: 'viewed' | 'unviewed') => {
     setActiveTab(tab);
     setCurrentPage(1);
-    setLimitError('');
   };
 
   const handlePageChange = (page: number) => {
@@ -127,20 +123,14 @@ export default function ContactsPage() {
   // Load contacts when tab, user, or search changes
   useEffect(() => {
     if (!clerkUser?.id) return;
-    loadContacts(activeTab, 1);
-  }, [clerkUser, activeTab, search]);
-
-  // Debounce search
-  useEffect(() => {
+    
     const timer = setTimeout(() => {
-      if (clerkUser?.id) {
-        setCurrentPage(1);
-        loadContacts(activeTab, 1);
-      }
-    }, 500);
+      setCurrentPage(1);
+      loadContacts(activeTab, 1);
+    }, search ? 500 : 0); // Debounce only for search
 
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [clerkUser, activeTab, search]);
 
   const totalPages = pagination.pages;
   const startIndex = (currentPage - 1) * pagination.limit;
@@ -169,11 +159,6 @@ export default function ContactsPage() {
           <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'}`}>
             Credits Remaining: {remaining}
           </span>
-          {limitError && (
-            <span className="text-xs text-red-600 animate-pulse">
-              {limitError}
-            </span>
-          )}
         </div>
       </div>
 
