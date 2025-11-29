@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '../../../components/UI';
 import { useUser } from '@clerk/nextjs';
-import { Users, Building2, TrendingUp, MapPin } from 'lucide-react';
+import { Users, Building2, TrendingUp } from 'lucide-react';
 
 const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any) => {
   const isPositive = changeType === 'positive';
@@ -39,7 +39,6 @@ const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any
 interface DashboardStats {
   contacts: number;
   agencies: number;
-  population: number;
   usage: {
     count: number;
     total: number;
@@ -93,15 +92,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <StatCard 
-          title="Total Population" 
-          value={loading || !stats ? "..." : formatNumber(stats.population)} 
-          change="+12%" 
-          changeType="positive"
-          subtext="coverage area"
-          icon={MapPin} 
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <StatCard 
           title="Tracked Agencies" 
           value={loading || !stats ? "..." : stats.agencies} 
