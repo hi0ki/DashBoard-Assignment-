@@ -38,12 +38,14 @@ const SidebarItem = ({ href, icon: Icon, label, onClick }: { href: string, icon:
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   // Handle Dark Mode - MUST be before conditional returns
   useEffect(() => {
@@ -73,36 +75,87 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const handleLogout = async () => {
-    await signOut();
-    router.push('/');
+    try {
+      await signOut();
+      // Clear any cached user data
+      setHasCheckedAuth(false);
+      // Force redirect to auth page
+      window.location.href = '/auth';
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Fallback redirect
+      window.location.href = '/auth';
+    }
   };
 
-  // Redirect if not authenticated - with delay to allow for auth completion
+  // Better authentication check with proper timing
   useEffect(() => {
-    if (isLoaded && !user) {
-      // Add a small delay to allow authentication to complete
-      const timeoutId = setTimeout(() => {
-        if (!user) {
-          router.push('/login');
-        }
-      }, 500);
-
-      return () => clearTimeout(timeoutId);
+    let timeoutId: NodeJS.Timeout;
+    
+    if (isLoaded) {
+      if (isSignedIn && user) {
+        // User is authenticated, proceed
+        setHasCheckedAuth(true);
+        setIsInitializing(false);
+      } else if (!isSignedIn && !hasCheckedAuth) {
+        // Give extra time for authentication to complete (especially for new users)
+        timeoutId = setTimeout(() => {
+          if (!isSignedIn) {
+            setHasCheckedAuth(true);
+            setIsInitializing(false);
+            router.replace('/auth');
+          }
+        }, 5000); // Extended to 5 seconds
+      } else if (!isSignedIn && hasCheckedAuth) {
+        // User is definitely not authenticated
+        router.replace('/auth');
+      }
+    } else {
+      // Still loading Clerk
+      setIsInitializing(true);
     }
-  }, [isLoaded, user, router]);
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isLoaded, isSignedIn, user, hasCheckedAuth, router]);
+
+  // Additional safety check for user changes
+  useEffect(() => {
+    if (isLoaded && hasCheckedAuth) {
+      if (user) {
+        setIsInitializing(false);
+      } else if (!isSignedIn) {
+        router.replace('/register');
+      }
+    }
+  }, [user, isLoaded, isSignedIn, hasCheckedAuth, router]);
 
   // Show loading while checking authentication
-  if (!isLoaded) {
+  if (!isLoaded || isInitializing || (!user && !hasCheckedAuth)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">
+            {!isLoaded ? 'Loading authentication...' : 'Setting up your dashboard...'}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+            This may take a few moments for new accounts
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Final check - if we reach here without a user, something went wrong
+  if (!user || !isSignedIn) {
+    router.replace('/auth');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
-  }
-
-  // Don't render if user is not authenticated
-  if (!user) {
-    return null;
   }
 
   return (

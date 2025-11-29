@@ -49,10 +49,12 @@ export default function Dashboard() {
   
   useEffect(() => {
     const loadDashboardData = async () => {
+      if (!clerkUser?.id) return;
+      
       const [agencies, contacts, usageStats] = await Promise.all([
         dataService.getAgencies(),
         dataService.getContacts(),
-        dataService.getUsageStats()
+        dataService.getUsageStats(clerkUser.id)
       ]);
 
       const totalPopulation = agencies.reduce((acc, curr) => acc + (curr.population || 0), 0);
@@ -67,7 +69,7 @@ export default function Dashboard() {
     };
 
     loadDashboardData();
-  }, []);
+  }, [clerkUser?.id]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';

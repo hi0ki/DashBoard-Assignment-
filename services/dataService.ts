@@ -62,12 +62,18 @@ const CONTACTS_DATA = generateContacts(1203, AGENCIES_DATA);
 
 // --- Limit Tracking ---
 
-const STORAGE_KEY_LIMIT = 'InfinitiveByt_daily_limit';
-const STORAGE_KEY_UNLOCKED = 'InfinitiveByt_unlocked_contacts';
+const getStorageKeyLimit = (userId: string) => `InfinitiveByt_daily_limit_${userId}`;
+const getStorageKeyUnlocked = (userId: string) => `InfinitiveByt_unlocked_contacts_${userId}`;
+const getStorageKeyViewOrder = (userId: string) => `InfinitiveByt_view_order_${userId}`;
 
 interface LimitState {
   date: string;
   count: number;
+}
+
+interface ViewOrder {
+  contactId: string;
+  timestamp: number;
 }
 
 export const dataService = {
@@ -81,21 +87,23 @@ export const dataService = {
     return CONTACTS_DATA; 
   },
 
-  // Get list of IDs that are already paid for/unlocked
-  getUnlockedContactIds: (): Set<string> => {
-    const stored = localStorage.getItem(STORAGE_KEY_UNLOCKED);
+  // Get list of IDs that are already paid for/unlocked (kept forever)
+  getUnlockedContactIds: (userId: string): Set<string> => {
+    // Users keep their unlocked contacts forever
+    const stored = localStorage.getItem(getStorageKeyUnlocked(userId));
     return stored ? new Set(JSON.parse(stored)) : new Set();
   },
 
   // Unlock a specific contact
-  unlockContact: async (contactId: string): Promise<{ success: boolean; remaining: number }> => {
+  unlockContact: async (contactId: string, userId: string): Promise<{ success: boolean; remaining: number }> => {
     const today = new Date().toISOString().split('T')[0];
     
     // 1. Check unlocked status
-    const unlockedIds = dataService.getUnlockedContactIds();
+    const unlockedIds = dataService.getUnlockedContactIds(userId);
     if (unlockedIds.has(contactId)) {
-      // Already unlocked, no cost
-      const limitState = dataService.getLimitState();
+      // Already unlocked, update view order but no cost
+      dataService.updateViewOrder(contactId, userId);
+      const limitState = dataService.getLimitState(userId);
       return { 
         success: true, 
         remaining: Math.max(0, DAILY_CONTACT_LIMIT - limitState.count) 
@@ -103,13 +111,10 @@ export const dataService = {
     }
 
     // 2. Check Daily Limit
-    const limitState = dataService.getLimitState();
+    const limitState = dataService.getLimitState(userId);
     
-    // Reset if new day
-    if (limitState.date !== today) {
-      limitState.date = today;
-      limitState.count = 0;
-    }
+    // getLimitState already handles daily counter reset
+    // Note: We keep unlocked contacts forever, only reset daily view counter
 
     if (limitState.count >= DAILY_CONTACT_LIMIT) {
       return { success: false, remaining: 0 };
@@ -117,11 +122,14 @@ export const dataService = {
 
     // 3. Process Transaction
     const newCount = limitState.count + 1;
-    localStorage.setItem(STORAGE_KEY_LIMIT, JSON.stringify({ ...limitState, count: newCount }));
+    localStorage.setItem(getStorageKeyLimit(userId), JSON.stringify({ ...limitState, count: newCount }));
     
     // Save to unlocked list
     unlockedIds.add(contactId);
-    localStorage.setItem(STORAGE_KEY_UNLOCKED, JSON.stringify(Array.from(unlockedIds)));
+    localStorage.setItem(getStorageKeyUnlocked(userId), JSON.stringify(Array.from(unlockedIds)));
+    
+    // Track view order
+    dataService.updateViewOrder(contactId, userId);
 
     return {
       success: true,
@@ -129,24 +137,81 @@ export const dataService = {
     };
   },
 
-  getLimitState: (): LimitState => {
+  getLimitState: (userId: string): LimitState => {
     const today = new Date().toISOString().split('T')[0];
-    const stored = localStorage.getItem(STORAGE_KEY_LIMIT);
+    const stored = localStorage.getItem(getStorageKeyLimit(userId));
     let state: LimitState = stored ? JSON.parse(stored) : { date: today, count: 0 };
     
-    // Reset if stale date found on read
+    // Reset only the daily counter if new day (keep unlocked contacts forever)
     if (state.date !== today) {
       state = { date: today, count: 0 };
-      localStorage.setItem(STORAGE_KEY_LIMIT, JSON.stringify(state));
+      localStorage.setItem(getStorageKeyLimit(userId), JSON.stringify(state));
+      // Note: We DON'T clear unlocked contacts - users keep them forever
     }
     return state;
   },
 
-  getUsageStats: () => {
-    const state = dataService.getLimitState();
+  getUsageStats: (userId: string) => {
+    const state = dataService.getLimitState(userId);
     return {
       count: state.count,
       total: DAILY_CONTACT_LIMIT
     };
+  },
+
+  // Update view order for contact prioritization
+  updateViewOrder: (contactId: string, userId: string) => {
+    const stored = localStorage.getItem(getStorageKeyViewOrder(userId));
+    let viewOrders: ViewOrder[] = stored ? JSON.parse(stored) : [];
+    
+    // Remove existing entry for this contact
+    viewOrders = viewOrders.filter(v => v.contactId !== contactId);
+    
+    // Add new entry at the beginning
+    viewOrders.unshift({
+      contactId,
+      timestamp: Date.now()
+    });
+    
+    // Keep only last 100 views to prevent storage bloat
+    viewOrders = viewOrders.slice(0, 100);
+    
+    localStorage.setItem(getStorageKeyViewOrder(userId), JSON.stringify(viewOrders));
+  },
+
+  // Get contacts sorted by view order (recently viewed first)
+  getContactsSorted: async (userId: string): Promise<Contact[]> => {
+    const contacts = await dataService.getContacts();
+    const stored = localStorage.getItem(getStorageKeyViewOrder(userId));
+    const viewOrders: ViewOrder[] = stored ? JSON.parse(stored) : [];
+    const unlockedIds = dataService.getUnlockedContactIds(userId);
+    
+    // Create a map for quick lookup of view order
+    const orderMap = new Map<string, number>();
+    viewOrders.forEach((view, index) => {
+      if (unlockedIds.has(view.contactId)) {
+        orderMap.set(view.contactId, index);
+      }
+    });
+    
+    // Sort contacts: viewed contacts first (by view order), then unviewed
+    return contacts.sort((a, b) => {
+      const aOrder = orderMap.get(a.id);
+      const bOrder = orderMap.get(b.id);
+      
+      // Both viewed - sort by view order
+      if (aOrder !== undefined && bOrder !== undefined) {
+        return aOrder - bOrder;
+      }
+      
+      // Only a is viewed - a comes first
+      if (aOrder !== undefined) return -1;
+      
+      // Only b is viewed - b comes first
+      if (bOrder !== undefined) return 1;
+      
+      // Neither viewed - maintain original order
+      return 0;
+    });
   }
 };

@@ -40,17 +40,23 @@ export default function Profile() {
     setMessage('');
 
     try {
+      // Update name fields
       await user.update({
         firstName: firstName,
         lastName: lastName,
+      });
+      
+      // Update public metadata separately
+      await user.update({
         publicMetadata: {
           ...user.publicMetadata,
           profileImage: profileImage
         }
-      });
+      } as any); // Type assertion to handle Clerk typing issue
       
       setMessage('Profile updated successfully!');
     } catch (err) {
+      console.error('Profile update error:', err);
       setMessage('Failed to update profile.');
     } finally {
       setLoading(false);

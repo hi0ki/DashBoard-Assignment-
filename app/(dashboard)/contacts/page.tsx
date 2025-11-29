@@ -4,32 +4,52 @@ import React, { useEffect, useState } from 'react';
 import { Card, Button } from '../../../components/UI';
 import { dataService } from '../../../services/dataService';
 import { Contact } from '../../../types';
-import { Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Eye, EyeOff, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
 
 export default function Contacts() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const { user: clerkUser } = useUser();
+  const [allContacts, setAllContacts] = useState<Contact[]>([]);
+  const [displayedContacts, setDisplayedContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewedIds, setViewedIds] = useState<Set<string>>(new Set());
   const [limitError, setLimitError] = useState('');
   const [remaining, setRemaining] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const contactsPerPage = 50;
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(allContacts.length / contactsPerPage);
+  const startIndex = (currentPage - 1) * contactsPerPage;
+  const endIndex = startIndex + contactsPerPage;
 
   useEffect(() => {
-    // Load contacts
-    dataService.getContacts().then(data => {
-      setContacts(data);
+    if (!clerkUser?.id) return;
+    
+    // Load contacts sorted by view priority
+    dataService.getContactsSorted(clerkUser.id).then(data => {
+      setAllContacts(data);
       setLoading(false);
     });
 
     // Load persisted unlocked status and limit
-    const unlocked = dataService.getUnlockedContactIds();
+    const unlocked = dataService.getUnlockedContactIds(clerkUser.id);
     setViewedIds(unlocked);
     
-    const stats = dataService.getUsageStats();
+    const stats = dataService.getUsageStats(clerkUser.id);
     setRemaining(stats.total - stats.count);
-  }, []);
+  }, [clerkUser?.id]);
+
+  // Update displayed contacts when page or contacts change
+  useEffect(() => {
+    const paginatedContacts = allContacts.slice(startIndex, endIndex);
+    setDisplayedContacts(paginatedContacts);
+  }, [allContacts, currentPage, startIndex, endIndex]);
 
   const handleViewContact = async (id: string) => {
-    const result = await dataService.unlockContact(id);
+    if (!clerkUser?.id) return;
+    
+    const result = await dataService.unlockContact(id, clerkUser.id);
     
     if (result.success) {
       const newViewed = new Set(viewedIds);
@@ -37,8 +57,30 @@ export default function Contacts() {
       setViewedIds(newViewed);
       setRemaining(result.remaining);
       setLimitError('');
+      
+      // Refresh contacts to show new sort order
+      const updatedContacts = await dataService.getContactsSorted(clerkUser.id);
+      setAllContacts(updatedContacts);
     } else {
       setLimitError('Daily view limit reached. Upgrade to view more contacts.');
+    }
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -48,6 +90,9 @@ export default function Contacts() {
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
           <p className="text-gray-500 dark:text-gray-400">Access contact details of your network</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            Showing {startIndex + 1}-{Math.min(endIndex, allContacts.length)} of {allContacts.length} contacts (Page {currentPage} of {totalPages})
+          </p>
         </div>
         
         <div className="flex flex-col items-end">
@@ -82,7 +127,7 @@ export default function Contacts() {
                   </td>
                 </tr>
               ) : (
-                contacts.map((contact) => {
+                displayedContacts.map((contact) => {
                   const isViewed = viewedIds.has(contact.id);
                   return (
                     <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
@@ -137,6 +182,74 @@ export default function Contacts() {
           </table>
         </div>
       </Card>
+      
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="outline"
+              onClick={goToPrevPage}
+              disabled={currentPage === 1}
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft size={16} />
+              Previous
+            </Button>
+            
+            <div className="flex items-center gap-2">
+              {/* Page numbers */}
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+                
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "primary" : "outline"}
+                    onClick={() => goToPage(pageNum)}
+                    className="w-10 h-10 p-0"
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              
+              {totalPages > 5 && currentPage < totalPages - 2 && (
+                <>
+                  <span className="text-gray-500">...</span>
+                  <Button
+                    variant="outline"
+                    onClick={() => goToPage(totalPages)}
+                    className="w-10 h-10 p-0"
+                  >
+                    {totalPages}
+                  </Button>
+                </>
+              )}
+            </div>
+            
+            <Button
+              variant="outline"
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-2"
+            >
+              Next
+              <ChevronRight size={16} />
+            </Button>
+          </div>
+        </Card>
+      )}
+      
       <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-600 mt-4">
         <AlertTriangle size={12} />
         <span>Clicking "View" will consume 1 credit. Unlocked contacts remain visible for your session.</span>
