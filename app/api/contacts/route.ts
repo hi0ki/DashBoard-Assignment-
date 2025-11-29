@@ -120,7 +120,6 @@ export async function POST(request: NextRequest) {
         agency,
         position,
         notes,
-        clerkUserId: userId,
       },
     });
 

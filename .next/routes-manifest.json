@@ -19,7 +19,16 @@
     "afterFiles": [],
     "fallback": []
   },
-  "dynamicRoutes": [],
+  "dynamicRoutes": [
+    {
+      "page": "/api/contacts/[contactId]/view",
+      "regex": "^/api/contacts/([^/]+?)/view(?:/)?$",
+      "routeKeys": {
+        "nxtPcontactId": "nxtPcontactId"
+      },
+      "namedRegex": "^/api/contacts/(?<nxtPcontactId>[^/]+?)/view(?:/)?$"
+    }
+  ],
   "staticRoutes": [
     {
       "page": "/",
@@ -56,6 +65,12 @@
       "regex": "^/api/contacts(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/contacts(?:/)?$"
+    },
+    {
+      "page": "/api/import-csv",
+      "regex": "^/api/import\\-csv(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/import\\-csv(?:/)?$"
     },
     {
       "page": "/api/profile",
@@ -98,6 +113,12 @@
       "regex": "^/dashboard(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/import",
+      "regex": "^/import(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/import(?:/)?$"
     },
     {
       "page": "/profile",

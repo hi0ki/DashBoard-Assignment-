@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { contactId: string } }
+  { params }: { params: Promise<{ contactId: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -12,7 +12,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { contactId } = params;
+    const { contactId } = await params;
 
     // Check if contact exists
     const contact = await prisma.contact.findUnique({
@@ -24,12 +24,10 @@ export async function POST(
     }
 
     // Check if user has already viewed this contact
-    const existingView = await prisma.contactView.findUnique({
+    const existingView = await prisma.contactView.findFirst({
       where: {
-        contactId_clerkUserId: {
-          contactId: contactId,
-          clerkUserId: userId
-        }
+        contactId: contactId,
+        clerkUserId: userId
       }
     });
 
