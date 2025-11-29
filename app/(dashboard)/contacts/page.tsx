@@ -70,7 +70,10 @@ export default function ContactsPage() {
       if (response.ok) {
         setContacts(data.contacts);
         setPagination(data.pagination);
-        setRemaining(data.remaining || 50);
+        // Always update remaining from API response
+        if (data.remaining !== undefined) {
+          setRemaining(data.remaining);
+        }
       } else {
         console.error('Error loading contacts:', data.error);
         setContacts([]);
@@ -80,6 +83,22 @@ export default function ContactsPage() {
       setContacts([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Load user credits separately
+  const loadUserCredits = async () => {
+    if (!clerkUser?.id) return;
+    
+    try {
+      const response = await fetch('/api/dashboard/stats');
+      const data = await response.json();
+      
+      if (response.ok && data.usage) {
+        setRemaining(data.usage.remaining);
+      }
+    } catch (error) {
+      console.error('Error loading user credits:', error);
     }
   };
 
@@ -123,13 +142,15 @@ export default function ContactsPage() {
     loadContacts(activeTab, page);
   };
 
-  // Load contacts when tab, user, or search changes
+  // Load contacts and credits when tab, user, or search changes
   useEffect(() => {
     if (!clerkUser?.id) return;
     
     const timer = setTimeout(() => {
       setCurrentPage(1);
       loadContacts(activeTab, 1);
+      // Also load credits to ensure we have the latest remaining count
+      loadUserCredits();
     }, search ? 500 : 0); // Debounce only for search
 
     return () => clearTimeout(timer);
