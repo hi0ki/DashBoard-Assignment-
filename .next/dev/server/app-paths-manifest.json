@@ -1,10 +1,6 @@
 {
-  "/(dashboard)/agencies/page": "app/(dashboard)/agencies/page.js",
-  "/(dashboard)/contacts/page": "app/(dashboard)/contacts/page.js",
-  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
-  "/(dashboard)/profile/page": "app/(dashboard)/profile/page.js",
-  "/api/profile/route": "app/api/profile/route.js",
   "/auth/login/page": "app/auth/login/page.js",
   "/auth/page": "app/auth/page.js",
+  "/auth/register/page": "app/auth/register/page.js",
   "/page": "app/page.js"
 }

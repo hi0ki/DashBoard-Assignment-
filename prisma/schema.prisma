@@ -25,30 +25,51 @@ model UserProfile {
 }
 
 model Agency {
-  id          String   @id @default(cuid())
-  name        String
-  state       String
-  stateCode   String   @map("state_code")
-  type        String   // 'City' or 'County'
-  population  Int
-  website     String?
-  county      String?
-  createdAt   DateTime @default(now()) @map("created_at")
+  id               String   @id @default(cuid())
+  originalId       String?  @map("original_id")
+  name             String
+  state            String?
+  stateCode        String?  @map("state_code")
+  type             String?  // 'City' or 'County'
+  population       String?
+  website          String?
+  county           String?
+  phone            String?
+  mailingAddress   String?  @map("mailing_address")
+  physicalAddress  String?  @map("physical_address")
+  createdAt        DateTime @default(now()) @map("created_at")
 
   @@map("agencies")
 }
 
 model Contact {
   id          String   @id @default(cuid())
+  originalId  String?  @map("original_id")
   name        String
   email       String?
   phone       String?
+  position    String?  // was title in CSV
+  department  String?
   agency      String?
-  position    String?
+  agencyId    String?  @map("agency_id")
   notes       String?
-  clerkUserId String   @map("clerk_user_id")
-  viewedAt    DateTime @default(now()) @map("viewed_at")
   createdAt   DateTime @default(now()) @map("created_at")
 
+  // Relationship to track which users have viewed this contact
+  views       ContactView[]
+
   @@map("contacts")
+}
+
+model ContactView {
+  id          String   @id @default(cuid())
+  contactId   String   @map("contact_id")
+  clerkUserId String   @map("clerk_user_id")
+  viewedAt    DateTime @default(now()) @map("viewed_at")
+
+  // Relationship back to contact
+  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, clerkUserId])
+  @@map("contact_views")
 }
