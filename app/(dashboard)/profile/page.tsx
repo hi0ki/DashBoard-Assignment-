@@ -8,6 +8,7 @@ import { Upload } from 'lucide-react';
 export default function Profile() {
   const { user, isLoaded } = useUser();
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -17,30 +18,77 @@ export default function Profile() {
 
   useEffect(() => {
     if (user) {
-      // Load profile from database
+      // Only load profile from database
       loadProfile();
-      
-      // Fallback to Clerk data if no DB profile
-      setFirstName(user.firstName || '');
-      setLastName(user.lastName || '');
     }
   }, [user]);
 
   const loadProfile = async () => {
+    if (!user) return;
+    
+    setInitialLoading(true);
     try {
       const response = await fetch('/api/profile');
       if (response.ok) {
         const profile = await response.json();
         if (profile) {
+          // User has a profile in database
           setFirstName(profile.firstName || '');
           setLastName(profile.lastName || '');
           setProfileImage(profile.imageUrl || '');
           setBio(profile.bio || '');
           setPhone(profile.phone || '');
         }
+      } else if (response.status === 404) {
+        // No profile exists, create one automatically from Clerk data
+        await createInitialProfile();
+      } else {
+        // Use Clerk data as fallback
+        setFirstName(user?.firstName || '');
+        setLastName(user?.lastName || '');
       }
     } catch (error) {
       console.error('Error loading profile:', error);
+      // Fallback to Clerk data on error
+      setFirstName(user?.firstName || '');
+      setLastName(user?.lastName || '');
+    } finally {
+      setInitialLoading(false);
+    }
+  };
+
+  const createInitialProfile = async () => {
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          imageUrl: user?.imageUrl || '',
+          bio: '',
+          phone: '',
+        }),
+      });
+
+      if (response.ok) {
+        const profile = await response.json();
+        // Set the form with the created profile data
+        setFirstName(profile.firstName || '');
+        setLastName(profile.lastName || '');
+        setProfileImage(profile.imageUrl || '');
+        setBio(profile.bio || '');
+        setPhone(profile.phone || '');
+        console.log('Initial profile created automatically');
+      }
+    } catch (error) {
+      console.error('Error creating initial profile:', error);
+      // Fallback to Clerk data
+      setFirstName(user?.firstName || '');
+      setLastName(user?.lastName || '');
+      setProfileImage(user?.imageUrl || '');
     }
   };
 
@@ -130,7 +178,7 @@ export default function Profile() {
     }
   };
 
-  if (!isLoaded || !user) {
+  if (!isLoaded || !user || initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

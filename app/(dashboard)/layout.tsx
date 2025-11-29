@@ -46,6 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [dbProfileImage, setDbProfileImage] = useState<string>('');
 
   // Handle Dark Mode - MUST be before conditional returns
   useEffect(() => {
@@ -130,6 +131,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }
     }
   }, [user, isLoaded, isSignedIn, hasCheckedAuth, router]);
+
+  // Load profile image from database
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      if (user) {
+        try {
+          const response = await fetch('/api/profile');
+          if (response.ok) {
+            const profile = await response.json();
+            if (profile?.imageUrl) {
+              setDbProfileImage(profile.imageUrl);
+            }
+          }
+        } catch (error) {
+          console.error('Error loading profile image:', error);
+        }
+      }
+    };
+
+    loadProfileImage();
+  }, [user]);
 
   // Show loading while checking authentication
   if (!isLoaded || isInitializing || (!user && !hasCheckedAuth)) {
@@ -228,8 +250,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   : user?.firstName || user?.username || 'User'}
               </span>
               <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border border-gray-200 dark:border-gray-700">
-                {user?.publicMetadata?.profileImage ? (
-                   <img src={user.publicMetadata.profileImage as string} alt="Profile" className="h-full w-full object-cover" />
+                {dbProfileImage ? (
+                   <img src={dbProfileImage} alt="Profile" className="h-full w-full object-cover" />
                 ) : user?.imageUrl ? (
                    <img src={user.imageUrl} alt="Profile" className="h-full w-full object-cover" />
                 ) : (

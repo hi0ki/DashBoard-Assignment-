@@ -10,8 +10,12 @@ export async function GET() {
     }
 
     const profile = await prisma.userProfile.findUnique({
-      where: { clerkUserId: userId },
+      where: { clerkUserId: userId }
     });
+
+    if (!profile) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    }
 
     return NextResponse.json(profile);
   } catch (error) {
