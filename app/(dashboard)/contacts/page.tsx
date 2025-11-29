@@ -93,8 +93,25 @@ export default function ContactsPage() {
       
       if (response.ok) {
         setRemaining(data.remainingViews || 0);
-        // Reload contacts to update the lists
-        loadContacts(activeTab, currentPage);
+        
+        // Update the contact in the current list to show as viewed
+        setContacts(prevContacts => 
+          prevContacts.map(contact => 
+            contact.id === contactId 
+              ? { ...contact, isViewed: true, viewedAt: data.viewedAt }
+              : contact
+          )
+        );
+        
+        // If on unviewed tab, remove the contact after 2 seconds
+        if (activeTab === 'unviewed') {
+          setTimeout(() => {
+            setContacts(prevContacts => 
+              prevContacts.filter(contact => contact.id !== contactId)
+            );
+          }, 2000);
+        }
+        
         setLimitError('');
       } else {
         setLimitError(data.error || 'Failed to mark contact as viewed');
