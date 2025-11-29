@@ -41,6 +41,7 @@ export default function ContactsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('');
   const [remaining, setRemaining] = useState(50);
+  const [error, setError] = useState('');
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
     pages: 1,
@@ -101,18 +102,20 @@ export default function ContactsPage() {
               : contact
           )
         );
+        setError(''); // Clear any previous errors
       } else {
-        alert(data.error || 'Failed to mark contact as viewed');
+        setError(data.error || 'Failed to mark contact as viewed');
       }
     } catch (error) {
       console.error('Error viewing contact:', error);
-      alert('Network error occurred');
+      setError('Network error occurred');
     }
   };
 
   const handleTabChange = (tab: 'viewed' | 'unviewed') => {
     setActiveTab(tab);
     setCurrentPage(1);
+    setError(''); // Clear error when switching tabs
   };
 
   const handlePageChange = (page: number) => {
@@ -156,9 +159,16 @@ export default function ContactsPage() {
         </div>
         
         <div className="flex flex-col items-end gap-2">
-          <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'}`}>
-            Credits Remaining: {remaining}
-          </span>
+          <div className="flex flex-col items-end">
+            <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'}`}>
+              Credits Remaining: {remaining}
+            </span>
+            {error && (
+              <span className="text-xs text-red-600 mt-1 max-w-[200px] text-right">
+                {error}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
