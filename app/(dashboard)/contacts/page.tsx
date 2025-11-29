@@ -103,15 +103,6 @@ export default function ContactsPage() {
           )
         );
         
-        // If on unviewed tab, remove the contact after 2 seconds
-        if (activeTab === 'unviewed') {
-          setTimeout(() => {
-            setContacts(prevContacts => 
-              prevContacts.filter(contact => contact.id !== contactId)
-            );
-          }, 2000);
-        }
-        
         setLimitError('');
       } else {
         setLimitError(data.error || 'Failed to mark contact as viewed');

@@ -2,52 +2,104 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, Button } from '../../../components/UI';
-import { dataService } from '../../../services/dataService';
 import { Agency } from '../../../types';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+
+interface AgenciesResponse {
+  agencies: Agency[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+}
 
 export default function Agencies() {
-  const [allAgencies, setAllAgencies] = useState<Agency[]>([]);
-  const [displayedAgencies, setDisplayedAgencies] = useState<Agency[]>([]);
+  const [agencies, setAgencies] = useState<Agency[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalAgencies, setTotalAgencies] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   const agenciesPerPage = 50;
 
-  // Calculate pagination values
-  const totalPages = Math.ceil(allAgencies.length / agenciesPerPage);
-  const startIndex = (currentPage - 1) * agenciesPerPage;
-  const endIndex = startIndex + agenciesPerPage;
+  const fetchAgencies = async (page = 1, search = '') => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: agenciesPerPage.toString(),
+        ...(search && { search }),
+      });
+      
+      const response = await fetch(`/api/agencies?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch agencies');
+      }
+      
+      const data: AgenciesResponse = await response.json();
+      setAgencies(data.agencies);
+      setTotalPages(data.pagination.pages);
+      setTotalAgencies(data.pagination.total);
+      setCurrentPage(data.pagination.page);
+    } catch (error) {
+      console.error('Error loading agencies:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    dataService.getAgencies().then(data => {
-      setAllAgencies(data);
-      setLoading(false);
-    });
+    fetchAgencies();
   }, []);
 
-  // Update displayed agencies when page or agencies change
   useEffect(() => {
-    const paginatedAgencies = allAgencies.slice(startIndex, endIndex);
-    setDisplayedAgencies(paginatedAgencies);
-  }, [allAgencies, currentPage, startIndex, endIndex]);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      setCurrentPage(1);
+      fetchAgencies(1, searchTerm);
+    }, 300);
+
+    setSearchTimeout(timeout);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [searchTerm]);
 
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+      fetchAgencies(page, searchTerm);
     }
   };
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchAgencies(nextPage, searchTerm);
     }
   };
 
   const goToPrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      fetchAgencies(prevPage, searchTerm);
     }
   };
+
+  // Calculate display indices
+  const startIndex = (currentPage - 1) * agenciesPerPage;
+  const endIndex = Math.min(startIndex + agenciesPerPage, totalAgencies);
 
   return (
     <div className="space-y-6">
@@ -55,9 +107,25 @@ export default function Agencies() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Agencies</h1>
         <p className="text-gray-500 dark:text-gray-400">Manage your agency partners</p>
         <p className="text-sm text-gray-400 dark:text-gray-500">
-          Showing {startIndex + 1}-{Math.min(endIndex, allAgencies.length)} of {allAgencies.length} agencies (Page {currentPage} of {totalPages})
+          Showing {startIndex + 1}-{endIndex} of {totalAgencies} agencies (Page {currentPage} of {totalPages})
         </p>
       </div>
+
+      {/* Search Bar */}
+      <Card className="p-4">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search agencies by name, type, state, or county..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+      </Card>
 
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
@@ -80,8 +148,14 @@ export default function Agencies() {
                     Loading data...
                   </td>
                 </tr>
+              ) : agencies.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    {searchTerm ? 'No agencies found matching your search.' : 'No agencies available.'}
+                  </td>
+                </tr>
               ) : (
-                displayedAgencies.map((agency) => (
+                agencies.map((agency) => (
                   <tr key={agency.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                       {agency.name}

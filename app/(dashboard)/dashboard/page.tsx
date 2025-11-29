@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card } from '../../../components/UI';
-import { dataService } from '../../../services/dataService';
 import { useUser } from '@clerk/nextjs';
 import { Users, Building2, TrendingUp, MapPin } from 'lucide-react';
 
@@ -37,35 +36,39 @@ const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any
   );
 };
 
+interface DashboardStats {
+  contacts: number;
+  agencies: number;
+  population: number;
+  usage: {
+    count: number;
+    total: number;
+    remaining: number;
+  };
+}
+
 export default function Dashboard() {
   const { user: clerkUser } = useUser();
-  const [usage, setUsage] = useState({ count: 0, total: 0 });
-  const [stats, setStats] = useState({ 
-    population: 0, 
-    agenciesCount: 0, 
-    contactsCount: 0 
-  });
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const loadDashboardData = async () => {
       if (!clerkUser?.id) return;
       
-      const [agencies, contacts, usageStats] = await Promise.all([
-        dataService.getAgencies(),
-        dataService.getContacts(),
-        dataService.getUsageStats(clerkUser.id)
-      ]);
-
-      const totalPopulation = agencies.reduce((acc, curr) => acc + (curr.population || 0), 0);
-
-      setStats({
-        population: totalPopulation,
-        agenciesCount: agencies.length,
-        contactsCount: contacts.length
-      });
-      setUsage(usageStats);
-      setLoading(false);
+      try {
+        const response = await fetch('/api/dashboard/stats');
+        if (!response.ok) {
+          throw new Error('Failed to fetch dashboard stats');
+        }
+        
+        const data: DashboardStats = await response.json();
+        setStats(data);
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadDashboardData();
@@ -93,7 +96,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatCard 
           title="Total Population" 
-          value={loading ? "..." : formatNumber(stats.population)} 
+          value={loading || !stats ? "..." : formatNumber(stats.population)} 
           change="+12%" 
           changeType="positive"
           subtext="coverage area"
@@ -101,7 +104,7 @@ export default function Dashboard() {
         />
         <StatCard 
           title="Tracked Agencies" 
-          value={loading ? "..." : stats.agenciesCount} 
+          value={loading || !stats ? "..." : stats.agencies} 
           change="+4" 
           changeType="positive"
           subtext="new regions"
@@ -109,7 +112,7 @@ export default function Dashboard() {
         />
         <StatCard 
           title="Total Contacts" 
-          value={loading ? "..." : stats.contactsCount.toLocaleString()} 
+          value={loading || !stats ? "..." : stats.contacts.toLocaleString()} 
           change="+150" 
           changeType="positive"
           subtext="available leads"
@@ -117,7 +120,7 @@ export default function Dashboard() {
         />
         <StatCard 
           title="Daily API Usage" 
-          value={`${usage.count}/${usage.total}`} 
+          value={loading || !stats ? "..." : `${stats.usage.count}/${stats.usage.total}`} 
           change="Resets Daily" 
           changeType="neutral"
           subtext="view limit"
@@ -137,20 +140,20 @@ export default function Dashboard() {
             </div>
             <div className="text-right">
               <span className="text-xs font-semibold inline-block text-blue-600 dark:text-blue-400">
-                {Math.min(100, Math.round((usage.count / usage.total) * 100))}%
+                {stats ? Math.min(100, Math.round((stats.usage.count / stats.usage.total) * 100)) : 0}%
               </span>
             </div>
           </div>
           <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-100 dark:bg-gray-700">
             <div 
-              style={{ width: `${Math.min(100, (usage.count / usage.total) * 100)}%` }} 
-              className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ${usage.count >= usage.total ? 'bg-red-500' : 'bg-primary-500'}`}
+              style={{ width: stats ? `${Math.min(100, (stats.usage.count / stats.usage.total) * 100)}%` : '0%' }} 
+              className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ${stats && stats.usage.count >= stats.usage.total ? 'bg-red-500' : 'bg-primary-500'}`}
             ></div>
           </div>
           <p className="text-sm text-gray-500">
-            {usage.count >= usage.total 
+            {!stats ? 'Loading...' : stats.usage.count >= stats.usage.total 
               ? "You have reached your daily limit. Please come back tomorrow." 
-              : `You can view details for ${usage.total - usage.count} more contacts today.`}
+              : `You can view details for ${stats.usage.remaining} more contacts today.`}
           </p>
         </div>
       </Card>
