@@ -12,23 +12,79 @@ export default function Profile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [profileImage, setProfileImage] = useState<string>('');
+  const [bio, setBio] = useState('');
+  const [phone, setPhone] = useState('');
 
   useEffect(() => {
     if (user) {
+      // Load profile from database
+      loadProfile();
+      
+      // Fallback to Clerk data if no DB profile
       setFirstName(user.firstName || '');
       setLastName(user.lastName || '');
-      setProfileImage((user.publicMetadata?.profileImage as string) || '');
     }
   }, [user]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const loadProfile = async () => {
+    try {
+      const response = await fetch('/api/profile');
+      if (response.ok) {
+        const profile = await response.json();
+        if (profile) {
+          setFirstName(profile.firstName || '');
+          setLastName(profile.lastName || '');
+          setProfileImage(profile.imageUrl || '');
+          setBio(profile.bio || '');
+          setPhone(profile.phone || '');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
+      // Check file size (max 1MB)
+      if (file.size > 1024 * 1024) {
+        setMessage('Image size must be less than 1MB');
+        return;
+      }
+
+      // Create a compressed version
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Resize to max 300x300 to reduce size
+        const maxSize = 300;
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Convert to base64 with reduced quality
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        setProfileImage(compressedDataUrl);
       };
-      reader.readAsDataURL(file);
+      
+      img.src = URL.createObjectURL(file);
     }
   };
 
@@ -40,19 +96,30 @@ export default function Profile() {
     setMessage('');
 
     try {
-      // Update name fields
+      // Save to database
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          imageUrl: profileImage,
+          bio,
+          phone,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      // Also update Clerk for consistency (optional)
       await user.update({
         firstName: firstName,
         lastName: lastName,
       });
-      
-      // Update public metadata separately
-      await user.update({
-        publicMetadata: {
-          ...user.publicMetadata,
-          profileImage: profileImage
-        }
-      } as any); // Type assertion to handle Clerk typing issue
       
       setMessage('Profile updated successfully!');
     } catch (err) {
@@ -163,6 +230,31 @@ export default function Profile() {
                     className="bg-gray-50 dark:bg-gray-800 cursor-not-allowed opacity-60"
                   />
                   <p className="text-xs text-gray-500 mt-1">Email cannot be changed here. Manage it in your Google account.</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Phone Number
+                  </label>
+                  <Input 
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="Tell us about yourself..."
+                    rows={4}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 resize-none"
+                  />
                 </div>
             </div>
           </div>
