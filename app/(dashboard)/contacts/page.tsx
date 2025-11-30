@@ -205,8 +205,10 @@ export default function ContactsPage() {
                     }
                     
                     const timeUntilReset = nextReset.getTime() - new Date().getTime();
-                    const hoursUntilReset = Math.floor(timeUntilReset / (1000 * 60 * 60));
-                    const minutesUntilReset = Math.floor((timeUntilReset % (1000 * 60 * 60)) / (1000 * 60));
+                    // Add 1 hour (3600000 ms) to display local time
+                    const adjustedTime = timeUntilReset + (1000 * 60 * 60);
+                    const hoursUntilReset = Math.floor(adjustedTime / (1000 * 60 * 60));
+                    const minutesUntilReset = Math.floor((adjustedTime % (1000 * 60 * 60)) / (1000 * 60));
                     return `${hoursUntilReset}h ${minutesUntilReset}m`;
                   })()}
                 </span>
