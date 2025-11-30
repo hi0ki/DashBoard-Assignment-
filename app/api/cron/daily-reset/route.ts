@@ -11,9 +11,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get today's reset time (5:20 PM server time)
+    // Get today's reset time (11:00 PM server time = 00:00 AM local time)
     const today = new Date();
-    today.setHours(17, 20, 0, 0);
+    today.setHours(23, 0, 0, 0);
 
     // Find all users who haven't been reset today
     const usersToReset = await prisma.userProfile.findMany({
