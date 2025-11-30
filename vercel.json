@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/daily-reset",
-      "schedule": "52 17 * * *"
+      "schedule": "20 17 * * *"
     }
   ]
 }
