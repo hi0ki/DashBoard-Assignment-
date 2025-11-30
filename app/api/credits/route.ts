@@ -39,12 +39,10 @@ export async function GET(request: NextRequest) {
       console.log('DEBUG - Now >= todayReset?', now >= todayReset);
       console.log('DEBUG - lastReset < todayReset?', lastReset ? lastReset < todayReset : 'no lastReset');
       
-      // Reset logic: 
-      // 1. If user has 0 credits AND current time is after 5:52 PM today, reset them
-      // 2. If user has never been reset, reset them
-      const shouldReset = !lastReset || 
-                         (userProfile.remaining === 0 && now >= todayReset) ||
-                         (now >= todayReset && lastReset < todayReset);
+      // Reset logic: ONLY reset at the scheduled time (5:52 PM daily)
+      // 1. If user has never been reset, reset them  
+      // 2. If current time is after today's 5:52 PM AND last reset was before today's 5:52 PM
+      const shouldReset = !lastReset || (now >= todayReset && lastReset < todayReset);
       
       console.log('DEBUG - Should reset?', shouldReset);
       
