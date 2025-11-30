@@ -197,15 +197,14 @@ export default function ContactsPage() {
                 <span className="text-gray-500 dark:text-gray-400">
                   Next reset: {(() => {
                     const nextReset = new Date();
-                    nextReset.setHours(23, 0, 0, 0); // 11 PM server time = midnight local time
-                    
-                    // If current time is after 11 PM server time, next reset is tomorrow
+                    nextReset.setHours(23, 0, 0, 0); // 11:00 PM server time but actually 00:00 AM local time
+
                     if (new Date() >= nextReset) {
                       nextReset.setDate(nextReset.getDate() + 1);
                     }
                     
+                    // display time until reset
                     const timeUntilReset = nextReset.getTime() - new Date().getTime();
-                    // Add 1 hour (3600000 ms) to display local time
                     const adjustedTime = timeUntilReset + (1000 * 60 * 60);
                     const hoursUntilReset = Math.floor(adjustedTime / (1000 * 60 * 60));
                     const minutesUntilReset = Math.floor((adjustedTime % (1000 * 60 * 60)) / (1000 * 60));

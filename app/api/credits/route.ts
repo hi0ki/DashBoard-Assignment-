@@ -28,26 +28,14 @@ export async function GET(request: NextRequest) {
         }
       });
     } else {
-      // Check if user needs daily reset at 5:35 PM
+      // Check if user needs daily reset at 11:00 PM server time (on my time is 00:00 AM)
       const lastReset = userProfile.lastResetDate ? new Date(userProfile.lastResetDate) : null;
       const now = new Date();
       
-      console.log('DEBUG - Current time:', now.toLocaleString());
-      console.log('DEBUG - Reset time (5:52 PM):', todayReset.toLocaleString());
-      console.log('DEBUG - Last reset:', lastReset?.toLocaleString() || 'never');
-      console.log('DEBUG - Current remaining:', userProfile.remaining);
-      console.log('DEBUG - Now >= todayReset?', now >= todayReset);
-      console.log('DEBUG - lastReset < todayReset?', lastReset ? lastReset < todayReset : 'no lastReset');
-      
-      // Reset logic: ONLY reset at the scheduled time (5:52 PM daily)
-      // 1. If user has never been reset, reset them  
-      // 2. If current time is after today's 5:52 PM AND last reset was before today's 5:52 PM
+      // Only reset if:
       const shouldReset = !lastReset || (now >= todayReset && lastReset < todayReset);
       
-      console.log('DEBUG - Should reset?', shouldReset);
-      
       if (shouldReset) {
-        console.log('DEBUG - Resetting user to 50 credits');
         userProfile = await prisma.userProfile.update({
           where: { clerkUserId: userId },
           data: {
@@ -55,7 +43,6 @@ export async function GET(request: NextRequest) {
             lastResetDate: now
           }
         });
-        console.log('DEBUG - Reset complete, new remaining:', userProfile.remaining);
       }
     }
 
