@@ -30,17 +30,19 @@ export async function GET(request: NextRequest) {
     } else {
       // Check if user needs daily reset
       const lastReset = userProfile.lastResetDate ? new Date(userProfile.lastResetDate) : null;
+      const now = new Date();
       
-      // If user has no lastResetDate OR lastResetDate is before today's 12:40 AM, reset credits
-      // Since it's currently after 12:40 AM today, anyone who hasn't been reset since today's 12:40 AM should get reset
-      const needsReset = !lastReset || lastReset < todayReset;
+      // Only reset if:
+      // 1. User has no lastResetDate (new user), OR
+      // 2. Current time is after today's 4:00 PM AND lastReset was before today's 4:00 PM
+      const shouldReset = !lastReset || (now >= todayReset && lastReset < todayReset);
       
-      if (needsReset) {
+      if (shouldReset) {
         userProfile = await prisma.userProfile.update({
           where: { clerkUserId: userId },
           data: {
             remaining: 50,
-            lastResetDate: new Date()
+            lastResetDate: now
           }
         });
       }
