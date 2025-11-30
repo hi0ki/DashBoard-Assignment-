@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(
@@ -45,9 +45,15 @@ export async function POST(
 
   // Create profile if it doesn't exist
   if (!userProfile) {
+    // Get user data from Clerk to save firstName and lastName
+    const user = await clerkClient.users.getUser(userId);
+    
     userProfile = await prisma.userProfile.create({
       data: {
         clerkUserId: userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        imageUrl: user.imageUrl,
         remaining: 50,
         lastResetDate: new Date()
       }

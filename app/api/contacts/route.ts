@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
@@ -83,10 +83,15 @@ export async function GET(request: NextRequest) {
     if (userProfile) {
       remaining = userProfile.remaining;
     } else {
-      // Create user profile with default remaining credits and lastResetDate
+      // Create user profile with default remaining credits and user info from Clerk
+      const user = await clerkClient.users.getUser(userId);
+      
       await prisma.userProfile.create({
         data: {
           clerkUserId: userId,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          imageUrl: user.imageUrl,
           remaining: 50,
           lastResetDate: new Date()
         }
