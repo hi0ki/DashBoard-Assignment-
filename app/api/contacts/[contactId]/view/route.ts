@@ -46,7 +46,8 @@ export async function POST(
   // Create profile if it doesn't exist
   if (!userProfile) {
     // Get user data from Clerk to save firstName and lastName
-    const user = await clerkClient.users.getUser(userId);
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
     
     userProfile = await prisma.userProfile.create({
       data: {

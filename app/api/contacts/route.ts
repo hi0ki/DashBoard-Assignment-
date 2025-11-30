@@ -84,7 +84,8 @@ export async function GET(request: NextRequest) {
       remaining = userProfile.remaining;
     } else {
       // Create user profile with default remaining credits and user info from Clerk
-      const user = await clerkClient.users.getUser(userId);
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
       
       await prisma.userProfile.create({
         data: {
