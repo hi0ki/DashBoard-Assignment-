@@ -83,11 +83,12 @@ export async function GET(request: NextRequest) {
     if (userProfile) {
       remaining = userProfile.remaining;
     } else {
-      // Create user profile with default remaining credits
+      // Create user profile with default remaining credits and lastResetDate
       await prisma.userProfile.create({
         data: {
           clerkUserId: userId,
-          remaining: 50
+          remaining: 50,
+          lastResetDate: new Date()
         }
       });
     }

@@ -43,17 +43,16 @@ export async function POST(
       where: { clerkUserId: userId }
     });
 
-    // Create profile if it doesn't exist
-    if (!userProfile) {
-      userProfile = await prisma.userProfile.create({
-        data: {
-          clerkUserId: userId,
-          remaining: 50
-        }
-      });
-    }
-
-    if (userProfile.remaining <= 0) {
+  // Create profile if it doesn't exist
+  if (!userProfile) {
+    userProfile = await prisma.userProfile.create({
+      data: {
+        clerkUserId: userId,
+        remaining: 50,
+        lastResetDate: new Date()
+      }
+    });
+  }    if (userProfile.remaining <= 0) {
       return NextResponse.json({ 
         error: 'No remaining views left',
         remaining: 0
