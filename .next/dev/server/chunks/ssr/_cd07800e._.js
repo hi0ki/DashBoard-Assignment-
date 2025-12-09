@@ -95,7 +95,7 @@ __turbopack_context__.s([
     "ITEMS_PER_PAGE",
     ()=>ITEMS_PER_PAGE
 ]);
-const APP_NAME = "DAshboardApp";
+const APP_NAME = "MyDashboardApp";
 const DAILY_CONTACT_LIMIT = 50;
 const ITEMS_PER_PAGE = 10;
 }),
