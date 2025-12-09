@@ -81,11 +81,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       // Clear any cached user data
       setHasCheckedAuth(false);
       // Force redirect to auth page
-      window.location.href = '/auth';
+      window.location.href = '/auth/register';
     } catch (error) {
       console.error('Logout error:', error);
       // Fallback redirect
-      window.location.href = '/auth';
+      window.location.href = '/auth/register';
     }
   };
 
@@ -104,12 +104,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           if (!isSignedIn) {
             setHasCheckedAuth(true);
             setIsInitializing(false);
-            router.replace('/auth');
+              router.replace('/auth/register');
           }
         }, 5000); // Extended to 5 seconds
       } else if (!isSignedIn && hasCheckedAuth) {
         // User is definitely not authenticated
-        router.replace('/auth');
+        router.replace('/auth/register');
       }
     } else {
       // Still loading Clerk
@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if (user) {
         setIsInitializing(false);
       } else if (!isSignedIn) {
-        router.replace('/auth');
+        router.replace('/auth/register');
       }
     }
   }, [user, isLoaded, isSignedIn, hasCheckedAuth, router]);
@@ -172,7 +172,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Final check - if we reach here without a user, something went wrong
   if (!user || !isSignedIn) {
-    router.replace('/auth');
+    router.replace('/auth/register');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

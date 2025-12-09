@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata = {
-  title: 'InfinitiveByte Dashboard',
+  title: 'MyDashboard',
   description: 'Dashboard for Agencies and Contacts',
   icons: {
     icon: '/icon.jpeg',
