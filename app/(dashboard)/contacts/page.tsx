@@ -1,6 +1,7 @@
-'use client'
+ 'use client'
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useUser } from "@clerk/nextjs";
 import { Card } from "@/components/UI";
 import { Button } from "@/components/UI";
@@ -192,25 +193,20 @@ export default function ContactsPage() {
               Credits Remaining: {remaining}
             </span>
             {remaining === 0 && (
-              <div className="text-xs text-blue-600 dark:text-blue-400 mt-1 text-right">
-                <span className="block">Credits reset daily at 00:00 AM</span>
-                <span className="text-gray-500 dark:text-gray-400">
-                  Next reset: {(() => {
-                    const nextReset = new Date();
-                    nextReset.setHours(23, 0, 0, 0); // 11:00 PM server time but actually 00:00 AM local time
-
-                    if (new Date() >= nextReset) {
-                      nextReset.setDate(nextReset.getDate() + 1);
-                    }
-                    
-                    // display time until reset
-                    const timeUntilReset = nextReset.getTime() - new Date().getTime();
-                    const adjustedTime = timeUntilReset + (1000 * 60 * 60);
-                    const hoursUntilReset = Math.floor(adjustedTime / (1000 * 60 * 60));
-                    const minutesUntilReset = Math.floor((adjustedTime % (1000 * 60 * 60)) / (1000 * 60));
-                    return `${hoursUntilReset}h ${minutesUntilReset}m`;
-                  })()}
-                </span>
+              <div className="mt-3 w-full max-w-sm text-right">
+                <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 text-left">
+                      <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">You have used all your credits</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Credits reset daily at 00:00 AM. To continue revealing contacts now, upgrade your plan.</p>
+                    </div>
+                    <div className="flex-shrink-0 flex items-center">
+                      <Link href="/profile">
+                        <a className="inline-block px-3 py-1.5 bg-primary-600 text-white text-xs rounded-md hover:bg-primary-500">Upgrade Plan</a>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
             {error && (
