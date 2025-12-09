@@ -50,6 +50,7 @@ export default function Dashboard() {
   const { user: clerkUser } = useUser();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string>('');
   
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -58,13 +59,16 @@ export default function Dashboard() {
       try {
         const response = await fetch('/api/dashboard/stats');
         if (!response.ok) {
-          throw new Error('Failed to fetch dashboard stats');
+          const text = await response.text();
+          console.error('Dashboard stats response error:', response.status, text);
+          throw new Error(`Failed to fetch dashboard stats: ${response.status} ${text}`);
         }
         
         const data: DashboardStats = await response.json();
         setStats(data);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
+        setErrorMsg((error as Error)?.message || 'Unknown error');
       } finally {
         setLoading(false);
       }
@@ -118,6 +122,11 @@ export default function Dashboard() {
           icon={TrendingUp} 
         />
       </div>
+      {errorMsg && (
+        <div className="p-3 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-sm text-red-700">
+          <strong>Error:</strong> {errorMsg}
+        </div>
+      )}
 
       {/* Usage Bar */}
       <Card className="p-6">

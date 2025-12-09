@@ -172,7 +172,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Final check - if we reach here without a user, something went wrong
   if (!user || !isSignedIn) {
-    router.replace('/auth/register');
+    // Avoid calling router.replace during render (can be undefined during SSR
+    // and causes runtime errors). A redirect is already handled in the
+    // authentication useEffect above. Render a spinner while auth settles.
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -205,7 +207,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Brand Text */}
             <div className="flex flex-col">
               <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
-                InfiniteByte
+                MyDashboard
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1">
                 Dashboard
