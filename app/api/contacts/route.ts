@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
@@ -68,8 +68,31 @@ export async function GET(request: NextRequest) {
 
     // Get user profile to check remaining credits
     let remaining = 50;
-    const userProfile = await prisma.userProfile.findUnique({ where: { clerkUserId: userId } });
-    if (userProfile) remaining = userProfile.remaining;
+    let userProfile = await prisma.userProfile.findUnique({ where: { clerkUserId: userId } });
+    
+    // If no user profile exists, create one with default 50 remaining
+    if (!userProfile) {
+      try {
+        const client = await clerkClient();
+        const user = await client.users.getUser(userId);
+        userProfile = await prisma.userProfile.create({
+          data: {
+            clerkUserId: userId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            imageUrl: user.imageUrl,
+            remaining: 50,
+            lastResetDate: new Date()
+          }
+        });
+        remaining = 50;
+      } catch (e) {
+        console.error('Error creating user profile:', e);
+        remaining = 50; // Default if creation fails
+      }
+    } else {
+      remaining = userProfile.remaining;
+    }
 
     return NextResponse.json({
       contacts: contactsWithViewStatus,
