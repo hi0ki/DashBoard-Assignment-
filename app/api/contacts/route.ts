@@ -1,15 +1,20 @@
+import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    let userId: string | null = null;
+    const { userId: clerkUserId } = await auth();
+    if (clerkUserId) userId = clerkUserId;
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
+    const viewed = searchParams.get('viewed') === 'true';
     const skip = (page - 1) * limit;
 
-    // Base where clause for search
     let whereClause: any = {};
     if (search) {
       whereClause.OR = [
@@ -20,13 +25,22 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // REMOVE all userId/viewed filters for debug
-    // Return all contacts regardless of user or viewed status
+    if (userId) {
+      // Filter by view status for authenticated user
+      if (viewed) {
+        whereClause.views = { some: { clerkUserId: userId } };
+      } else {
+        whereClause.views = { none: { clerkUserId: userId } };
+      }
+    }
+    // else: no userId, show all contacts as unviewed
 
     const [contacts, total] = await Promise.all([
       prisma.contact.findMany({
         where: whereClause,
-        include: { views: true },
+        include: {
+          views: userId ? { where: { clerkUserId: userId }, select: { viewedAt: true } } : true,
+        },
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
@@ -42,9 +56,15 @@ export async function GET(request: NextRequest) {
       agency: contact.agency,
       position: contact.position,
       department: contact.department,
-      isViewed: contact.views.length > 0,
-      viewedAt: contact.views[0]?.viewedAt?.toISOString() || null,
+      isViewed: userId ? contact.views.length > 0 : false,
+      viewedAt: userId && contact.views[0]?.viewedAt ? contact.views[0].viewedAt.toISOString() : null,
     }));
+
+    let remaining = 0;
+    if (userId) {
+      const userProfile = await prisma.userProfile.findUnique({ where: { clerkUserId: userId } });
+      remaining = userProfile?.remaining ?? 50;
+    }
 
     return NextResponse.json({
       contacts: contactsWithViewStatus,
@@ -54,7 +74,7 @@ export async function GET(request: NextRequest) {
         total,
         pages: Math.ceil(total / limit),
       },
-      remaining: 50,
+      remaining,
     });
   } catch (error) {
     console.error('Error fetching contacts:', error);
