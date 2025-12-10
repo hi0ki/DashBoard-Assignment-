@@ -15,6 +15,15 @@ export async function GET(request: NextRequest) {
     const viewed = searchParams.get('viewed') === 'true';
     const skip = (page - 1) * limit;
 
+    if (!userId) {
+      // Not authenticated: return empty list and 0 credits
+      return NextResponse.json({
+        contacts: [],
+        pagination: { page, limit, total: 0, pages: 1 },
+        remaining: 0,
+      });
+    }
+
     let whereClause: any = {};
     if (search) {
       whereClause.OR = [
@@ -25,21 +34,18 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    if (userId) {
-      // Filter by view status for authenticated user
-      if (viewed) {
-        whereClause.views = { some: { clerkUserId: userId } };
-      } else {
-        whereClause.views = { none: { clerkUserId: userId } };
-      }
+    // Filter by view status for authenticated user
+    if (viewed) {
+      whereClause.views = { some: { clerkUserId: userId } };
+    } else {
+      whereClause.views = { none: { clerkUserId: userId } };
     }
-    // else: no userId, show all contacts as unviewed
 
     const [contacts, total] = await Promise.all([
       prisma.contact.findMany({
         where: whereClause,
         include: {
-          views: userId ? { where: { clerkUserId: userId }, select: { viewedAt: true } } : true,
+          views: { where: { clerkUserId: userId }, select: { viewedAt: true } },
         },
         skip,
         take: limit,
@@ -56,15 +62,14 @@ export async function GET(request: NextRequest) {
       agency: contact.agency,
       position: contact.position,
       department: contact.department,
-      isViewed: userId ? contact.views.length > 0 : false,
-      viewedAt: userId && contact.views[0]?.viewedAt ? contact.views[0].viewedAt.toISOString() : null,
+      isViewed: contact.views.length > 0,
+      viewedAt: contact.views[0]?.viewedAt?.toISOString() || null,
     }));
 
-    let remaining = 0;
-    if (userId) {
-      const userProfile = await prisma.userProfile.findUnique({ where: { clerkUserId: userId } });
-      remaining = userProfile?.remaining ?? 50;
-    }
+    // Get user profile to check remaining credits
+    let remaining = 50;
+    const userProfile = await prisma.userProfile.findUnique({ where: { clerkUserId: userId } });
+    if (userProfile) remaining = userProfile.remaining;
 
     return NextResponse.json({
       contacts: contactsWithViewStatus,
