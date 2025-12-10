@@ -44,6 +44,10 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    console.log('contacts API - userId:', userId);
+    console.log('contacts API - viewed:', viewed);
+    console.log('contacts API - whereClause:', JSON.stringify(whereClause, null, 2));
+
     const [contacts, total] = await Promise.all([
       prisma.contact.findMany({
         where: whereClause,
@@ -59,6 +63,9 @@ export async function GET(request: NextRequest) {
       }),
       prisma.contact.count({ where: whereClause }),
     ]);
+
+    console.log('contacts API - total count:', total);
+    console.log('contacts API - returned contacts:', contacts.length);
 
     // Add viewed status to each contact
     const contactsWithViewStatus = contacts.map(contact => ({
