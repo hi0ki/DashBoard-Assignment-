@@ -99,6 +99,14 @@ async function GET(request) {
         let userId = null;
         const { userId: clerkUserId } = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$clerk$2f$nextjs$2f$dist$2f$esm$2f$app$2d$router$2f$server$2f$auth$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["auth"])();
         if (clerkUserId) userId = clerkUserId;
+        // Debug logs to help diagnose why contacts aren't showing
+        try {
+            const dbHost = process.env.DATABASE_URL ? process.env.DATABASE_URL.split('@')[1]?.split('?')[0] : 'unknown';
+            console.log('contacts API - DB host:', dbHost);
+            console.log('contacts API - auth userId:', userId);
+        } catch (e) {
+            console.log('contacts API - debug log error', e);
+        }
         const { searchParams } = new URL(request.url);
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '10');

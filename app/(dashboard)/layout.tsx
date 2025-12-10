@@ -200,18 +200,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       `}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
-            {/* Logo Icon */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">∞</span>
+            {/* Compact Logo for Sidebar */}
+            <div className="w-9 h-9 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-md">
+              <span className="text-white font-semibold">∞</span>
             </div>
-            {/* Brand Text */}
-            <div className="flex flex-col">
-              <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
-                MyDashboard
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1">
-                Dashboard
-              </span>
+            <div className="hidden lg:block">
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{APP_NAME}</span>
             </div>
           </div>
           <button 
@@ -242,14 +236,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
         <header className="flex items-center justify-between h-16 px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <button 
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-          >
-            <Menu size={24} />
-          </button>
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+              aria-label="Open sidebar"
+            >
+              <Menu size={24} />
+            </button>
 
-          <div className="ml-auto flex items-center space-x-4">
+            <Link href="/dashboard" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-md">
+                <span className="text-white font-bold">∞</span>
+              </div>
+              <div className="leading-tight">
+                <span className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+                  {APP_NAME}
+                </span>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Insights & Leads</div>
+              </div>
+            </Link>
+          </div>
+
+          <div className="flex items-center space-x-4">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
@@ -263,7 +272,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   ? `${user.firstName} ${user.lastName}` 
                   : user?.firstName || user?.username || 'User'}
               </span>
-              <div className="h-12 w-12 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
+              <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
                 {dbProfileImage ? (
                    <img src={dbProfileImage} alt="Profile" className="h-full w-full object-cover" />
                 ) : user?.imageUrl ? (
