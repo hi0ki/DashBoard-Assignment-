@@ -18,9 +18,9 @@ export const metadata = {
   title: 'MyDashboard',
   description: 'Dashboard for Agencies and Contacts',
   icons: {
-    icon: '/icon.jpeg',
-    shortcut: '/icon.jpeg',
-    apple: '/icon.jpeg',
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
   },
 }
 

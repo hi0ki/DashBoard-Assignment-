@@ -4,8 +4,21 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    // Debug: log incoming request headers to help diagnose missing Clerk session
+    try {
+      const headersObj: Record<string, string> = {};
+      for (const [k, v] of request.headers.entries()) {
+        headersObj[k] = v as string;
+      }
+      console.log('dashboard stats request headers:', headersObj);
+    } catch (e) {
+      console.log('dashboard stats: failed to read headers', e);
+    }
+
     const { userId } = await auth();
+    console.log('dashboard stats auth userId:', userId);
     if (!userId) {
+      console.log('dashboard stats: returning 401 — no userId from auth()');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
