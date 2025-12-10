@@ -64,8 +64,19 @@ export default function ContactsPage() {
       if (search.trim()) {
         params.append('search', search.trim());
       }
+
+      // Try to get Clerk token for server-side validation
+      let headers: HeadersInit = {};
+      try {
+        const token = await (window as any).__clerk?.session?.getToken?.();
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      } catch (e) {
+        console.log('Could not get Clerk token, relying on cookies');
+      }
       
-      const response = await fetch(`/api/contacts?${params}`);
+      const response = await fetch(`/api/contacts?${params}`, { headers });
       const data = await response.json();
       
       if (response.ok) {

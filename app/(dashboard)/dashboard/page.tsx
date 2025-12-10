@@ -57,7 +57,18 @@ export default function Dashboard() {
       if (!clerkUser?.id) return;
       
       try {
-        const response = await fetch('/api/dashboard/stats');
+        // Try to get token from Clerk for server-side validation
+        let headers: HeadersInit = {};
+        try {
+          const token = await (window as any).__clerk?.session?.getToken?.();
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+          }
+        } catch (e) {
+          console.log('Could not get Clerk token, relying on cookies');
+        }
+
+        const response = await fetch('/api/dashboard/stats', { headers });
         if (!response.ok) {
           const text = await response.text();
           console.error('Dashboard stats response error:', response.status, text);

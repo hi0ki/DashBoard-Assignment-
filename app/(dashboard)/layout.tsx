@@ -81,7 +81,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       // Clear any cached user data
       setHasCheckedAuth(false);
       // Force redirect to auth page
-      window.location.href = '/auth/register';
+      window.location.href = '/auth';
     } catch (error) {
       console.error('Logout error:', error);
       // Fallback redirect

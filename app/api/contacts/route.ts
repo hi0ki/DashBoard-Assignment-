@@ -4,8 +4,30 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    let userId: string | null = null;
+
+    // Try to get userId from middleware/cookies first
+    const { userId: clerkUserId } = await auth();
+    if (clerkUserId) {
+      userId = clerkUserId;
+    } else {
+      // Fallback: try to extract from Authorization header token
+      const authHeader = request.headers.get('authorization');
+      if (authHeader?.startsWith('Bearer ')) {
+        const token = authHeader.slice(7);
+        try {
+          const client = await clerkClient();
+          const decoded = await client.verifyToken(token);
+          userId = decoded.sub;
+          console.log('contacts API: extracted userId from token:', userId);
+        } catch (e) {
+          console.log('contacts API: failed to verify token:', e);
+        }
+      }
+    }
+
     if (!userId) {
+      console.log('contacts API: returning 401 — no userId');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
