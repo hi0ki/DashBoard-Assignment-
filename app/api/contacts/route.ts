@@ -1,27 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, clerkClient } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    // Use Clerk server auth (middleware) to get userId
-    const { userId } = await auth();
-    if (!userId) {
-      console.log('contacts API: returning 401 — no userId from auth()');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
-    const viewed = searchParams.get('viewed') === 'true';
-
     const skip = (page - 1) * limit;
 
     // Base where clause for search
     let whereClause: any = {};
-    
     if (search) {
       whereClause.OR = [
         { name: { contains: search, mode: 'insensitive' as const } },
@@ -31,34 +20,13 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Filter by view status
-    if (viewed) {
-      whereClause.views = {
-        some: {
-          clerkUserId: userId
-        }
-      };
-    } else {
-      whereClause.views = {
-        none: {
-          clerkUserId: userId
-        }
-      };
-    }
-
-    console.log('contacts API - userId:', userId);
-    console.log('contacts API - viewed:', viewed);
-    console.log('contacts API - whereClause:', JSON.stringify(whereClause, null, 2));
+    // REMOVE all userId/viewed filters for debug
+    // Return all contacts regardless of user or viewed status
 
     const [contacts, total] = await Promise.all([
       prisma.contact.findMany({
         where: whereClause,
-        include: {
-          views: {
-            where: { clerkUserId: userId },
-            select: { viewedAt: true }
-          }
-        },
+        include: { views: true },
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
@@ -66,10 +34,6 @@ export async function GET(request: NextRequest) {
       prisma.contact.count({ where: whereClause }),
     ]);
 
-    console.log('contacts API - total count:', total);
-    console.log('contacts API - returned contacts:', contacts.length);
-
-    // Add viewed status to each contact
     const contactsWithViewStatus = contacts.map(contact => ({
       id: contact.id,
       name: contact.name,
@@ -82,32 +46,6 @@ export async function GET(request: NextRequest) {
       viewedAt: contact.views[0]?.viewedAt?.toISOString() || null,
     }));
 
-    // Get user profile to check remaining credits
-    const userProfile = await prisma.userProfile.findUnique({
-      where: { clerkUserId: userId }
-    });
-
-    // If no user profile exists, create one with default 50 remaining
-    let remaining = 50;
-    if (userProfile) {
-      remaining = userProfile.remaining;
-    } else {
-      // Create user profile with default remaining credits and user info from Clerk
-      const client = await clerkClient();
-      const user = await client.users.getUser(userId);
-      
-      await prisma.userProfile.create({
-        data: {
-          clerkUserId: userId,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          imageUrl: user.imageUrl,
-          remaining: 50,
-          lastResetDate: new Date()
-        }
-      });
-    }
-
     return NextResponse.json({
       contacts: contactsWithViewStatus,
       pagination: {
@@ -116,7 +54,7 @@ export async function GET(request: NextRequest) {
         total,
         pages: Math.ceil(total / limit),
       },
-      remaining: remaining,
+      remaining: 50,
     });
   } catch (error) {
     console.error('Error fetching contacts:', error);
@@ -126,11 +64,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { name, email, phone, agency, position, notes } = body;
 
