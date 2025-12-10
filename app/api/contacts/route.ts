@@ -8,6 +8,15 @@ export async function GET(request: NextRequest) {
     const { userId: clerkUserId } = await auth();
     if (clerkUserId) userId = clerkUserId;
 
+    // Debug logs to help diagnose why contacts aren't showing
+    try {
+      const dbHost = process.env.DATABASE_URL ? process.env.DATABASE_URL.split('@')[1]?.split('?')[0] : 'unknown';
+      console.log('contacts API - DB host:', dbHost);
+      console.log('contacts API - auth userId:', userId);
+    } catch (e) {
+      console.log('contacts API - debug log error', e);
+    }
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');

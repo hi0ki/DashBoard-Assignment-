@@ -17,6 +17,12 @@ export async function GET(request: NextRequest) {
 
     // Get userId from Clerk server auth (middleware)
     const { userId } = await auth();
+    try {
+      const dbHost = process.env.DATABASE_URL ? process.env.DATABASE_URL.split('@')[1]?.split('?')[0] : 'unknown';
+      console.log('dashboard stats - DB host:', dbHost);
+    } catch (e) {
+      console.log('dashboard stats - db debug error', e);
+    }
     console.log('dashboard stats auth userId:', userId);
     if (!userId) {
       console.log('dashboard stats: returning 401 — no userId from auth()');
