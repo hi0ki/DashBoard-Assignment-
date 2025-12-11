@@ -198,12 +198,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-blue-600 to-indigo-600">
-          <div className="flex items-center gap-3">
-            {/* Icon in sidebar */}
-            <div className="w-9 h-9 rounded-md bg-white/20 flex items-center justify-center shadow-md">
-              <span className="text-white font-bold">∞</span>
-            </div>
+        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex items-center">
+            {/* sidebar spacer (brand shown in header) */}
             <span className="sr-only">{APP_NAME}</span>
           </div>
           <button 
@@ -237,15 +234,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center space-x-4">
             <button 
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+              className="lg:hidden p-2 text-white/90 hover:bg-white/10 rounded-md"
               aria-label="Open sidebar"
             >
               <Menu size={24} />
             </button>
 
-            <Link href="/dashboard" className="flex items-center">
+            <Link href="/dashboard" className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-md">
                 <span className="text-white font-bold">∞</span>
+              </div>
+              <div className="leading-tight hidden sm:block">
+                <span className="text-lg font-extrabold text-white">{APP_NAME}</span>
+                <div className="text-xs text-white/80">Insights & Leads</div>
               </div>
             </Link>
           </div>
