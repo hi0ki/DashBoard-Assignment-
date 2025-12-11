@@ -199,14 +199,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-3">
-            {/* Compact Logo for Sidebar */}
-            <div className="w-9 h-9 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-md">
-              <span className="text-white font-semibold">∞</span>
-            </div>
-            <div className="hidden lg:block">
-              <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{APP_NAME}</span>
-            </div>
+          <div className="flex items-center">
+            {/* Sidebar spacing only — main brand/logo lives in header */}
+            <span className="sr-only">{APP_NAME}</span>
           </div>
           <button 
             onClick={() => setSidebarOpen(false)} 
