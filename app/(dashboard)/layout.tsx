@@ -198,9 +198,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center">
-            {/* Sidebar spacing only — main brand/logo lives in header */}
+        <div className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-blue-600 to-indigo-600">
+          <div className="flex items-center gap-3">
+            {/* Icon in sidebar */}
+            <div className="w-9 h-9 rounded-md bg-white/20 flex items-center justify-center shadow-md">
+              <span className="text-white font-bold">∞</span>
+            </div>
             <span className="sr-only">{APP_NAME}</span>
           </div>
           <button 
@@ -230,7 +233,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
-        <header className="flex items-center justify-between h-16 px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <header className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md">
           <div className="flex items-center space-x-4">
             <button 
               onClick={() => setSidebarOpen(true)}
@@ -240,15 +243,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Menu size={24} />
             </button>
 
-            <Link href="/dashboard" className="flex items-center gap-3">
+            <Link href="/dashboard" className="flex items-center">
               <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-md">
                 <span className="text-white font-bold">∞</span>
-              </div>
-              <div className="leading-tight">
-                <span className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
-                  {APP_NAME}
-                </span>
-                <div className="text-xs text-gray-500 dark:text-gray-400">Insights & Leads</div>
               </div>
             </Link>
           </div>
