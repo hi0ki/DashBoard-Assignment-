@@ -230,25 +230,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
-        <header className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md">
-          <div className="flex items-center space-x-4">
+        <header className="flex items-center justify-between h-16 px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center space-x-3">
+            <Link href="/dashboard" className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-sm">
+                <span className="text-white font-bold">∞</span>
+              </div>
+              <span className="text-lg font-extrabold text-gray-900 dark:text-white">{APP_NAME}</span>
+            </Link>
             <button 
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-white/90 hover:bg-white/10 rounded-md"
+              className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
               aria-label="Open sidebar"
             >
               <Menu size={24} />
             </button>
-
-            <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-md">
-                <span className="text-white font-bold">∞</span>
-              </div>
-              <div className="leading-tight hidden sm:block">
-                <span className="text-lg font-extrabold text-white">{APP_NAME}</span>
-                <div className="text-xs text-white/80">Insights & Leads</div>
-              </div>
-            </Link>
           </div>
 
           <div className="flex items-center space-x-4">
