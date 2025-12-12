@@ -68,7 +68,7 @@ export default function Dashboard() {
           console.log('Could not get Clerk token, relying on cookies');
         }
 
-        const response = await fetch('/api/dashboard/stats', { headers, credentials: 'include' });
+        const response = await fetch('/api/dashboard/stats', { headers });
         if (!response.ok) {
           const text = await response.text();
           console.error('Dashboard stats response error:', response.status, text);

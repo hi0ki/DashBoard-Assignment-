@@ -198,10 +198,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div className="flex items-center">
-            {/* sidebar spacer (brand shown in header) */}
-            <span className="sr-only">{APP_NAME}</span>
+        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center space-x-3">
+            {/* Logo Icon */}
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-sm">∞</span>
+            </div>
+            {/* Brand Text */}
+            <div className="flex flex-col">
+              <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+                MyDashboard
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1">
+                Dashboard
+              </span>
+            </div>
           </div>
           <button 
             onClick={() => setSidebarOpen(false)} 
@@ -231,23 +242,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
         <header className="flex items-center justify-between h-16 px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-3">
-            <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-md bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold">∞</span>
-              </div>
-              <span className="text-lg font-extrabold text-gray-900 dark:text-white">{APP_NAME}</span>
-            </Link>
-            <button 
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              aria-label="Open sidebar"
-            >
-              <Menu size={24} />
-            </button>
-          </div>
+          <button 
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+          >
+            <Menu size={24} />
+          </button>
 
-          <div className="flex items-center space-x-4">
+          <div className="ml-auto flex items-center space-x-4">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
@@ -261,7 +263,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   ? `${user.firstName} ${user.lastName}` 
                   : user?.firstName || user?.username || 'User'}
               </span>
-              <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
+              <div className="h-12 w-12 rounded-full bg-primary-100 dark:bg-primary-900/50 overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
                 {dbProfileImage ? (
                    <img src={dbProfileImage} alt="Profile" className="h-full w-full object-cover" />
                 ) : user?.imageUrl ? (
