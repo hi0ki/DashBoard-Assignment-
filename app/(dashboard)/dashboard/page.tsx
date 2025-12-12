@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card } from '../../../components/UI';
-import { useUser } from '@clerk/nextjs';
+// 🔑 FIX 1: Import useAuth for reliable token fetching
+import { useUser, useAuth } from '@clerk/nextjs'; 
 import { Users, Building2, TrendingUp } from 'lucide-react';
 
 const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any) => {
@@ -47,28 +48,41 @@ interface DashboardStats {
 }
 
 export default function Dashboard() {
-  const { user: clerkUser } = useUser();
+  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
+  // 🔑 FIX 2: Destructure getToken and isLoaded from useAuth
+  const { getToken, isLoaded: isAuthLoaded } = useAuth();
+  
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string>('');
   
+  // Combine readiness checks
+  const isClerkReady = isUserLoaded && isAuthLoaded; 
+
   useEffect(() => {
     const loadDashboardData = async () => {
-      if (!clerkUser?.id) return;
+      // 🛑 FIX 3: Guard the fetch call until Clerk is fully loaded AND a user is present
+      if (!isClerkReady || !clerkUser?.id) {
+          if (isClerkReady && !clerkUser?.id) {
+              setLoading(false);
+          }
+          return;
+      }
       
       try {
-        // Try to get token from Clerk for server-side validation
-        let headers: HeadersInit = {};
-        try {
-          const token = await (window as any).__clerk?.session?.getToken?.();
-          if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-          }
-        } catch (e) {
-          console.log('Could not get Clerk token, relying on cookies');
-        }
+        // 🔑 FIX 4: Use the official and reliable getToken method
+        const token = await getToken();
+        
+        const headers: HeadersInit = token 
+          ? { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}` 
+            }
+          : { 'Content-Type': 'application/json' };
 
-        const response = await fetch('/api/dashboard/stats', { headers });
+        // 🛑 FIX 5: Add credentials: 'include' to ensure cookies are sent (crucial for localhost)
+        const response = await fetch('/api/dashboard/stats', { headers, credentials: 'include' });
+        
         if (!response.ok) {
           const text = await response.text();
           console.error('Dashboard stats response error:', response.status, text);
@@ -86,7 +100,8 @@ export default function Dashboard() {
     };
 
     loadDashboardData();
-  }, [clerkUser?.id]);
+    // 🔑 FIX 6: Include all dependencies, including the readiness state
+  }, [clerkUser?.id, getToken, isClerkReady]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
