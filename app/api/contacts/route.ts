@@ -1,12 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { auth, clerkClient } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    let userId: string | null = null;
+    const { userId: clerkUserId } = await auth();
+    if (clerkUserId) userId = clerkUserId;
+
+    // Debug logs to help diagnose why contacts aren't showing
+    try {
+      const dbHost = process.env.DATABASE_URL ? process.env.DATABASE_URL.split('@')[1]?.split('?')[0] : 'unknown';
+      console.log('contacts API - DB host:', dbHost);
+      console.log('contacts API - auth userId:', userId);
+    } catch (e) {
+      console.log('contacts API - debug log error', e);
     }
 
     const { searchParams } = new URL(request.url);
@@ -14,12 +22,18 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
     const viewed = searchParams.get('viewed') === 'true';
-
     const skip = (page - 1) * limit;
 
-    // Base where clause for search
+    if (!userId) {
+      // Not authenticated: return empty list and 0 credits
+      return NextResponse.json({
+        contacts: [],
+        pagination: { page, limit, total: 0, pages: 1 },
+        remaining: 0,
+      });
+    }
+
     let whereClause: any = {};
-    
     if (search) {
       whereClause.OR = [
         { name: { contains: search, mode: 'insensitive' as const } },
@@ -29,29 +43,18 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Filter by view status
+    // Filter by view status for authenticated user
     if (viewed) {
-      whereClause.views = {
-        some: {
-          clerkUserId: userId
-        }
-      };
+      whereClause.views = { some: { clerkUserId: userId } };
     } else {
-      whereClause.views = {
-        none: {
-          clerkUserId: userId
-        }
-      };
+      whereClause.views = { none: { clerkUserId: userId } };
     }
 
     const [contacts, total] = await Promise.all([
       prisma.contact.findMany({
         where: whereClause,
         include: {
-          views: {
-            where: { clerkUserId: userId },
-            select: { viewedAt: true }
-          }
+          views: { where: { clerkUserId: userId }, select: { viewedAt: true } },
         },
         skip,
         take: limit,
@@ -60,7 +63,6 @@ export async function GET(request: NextRequest) {
       prisma.contact.count({ where: whereClause }),
     ]);
 
-    // Add viewed status to each contact
     const contactsWithViewStatus = contacts.map(contact => ({
       id: contact.id,
       name: contact.name,
@@ -74,29 +76,31 @@ export async function GET(request: NextRequest) {
     }));
 
     // Get user profile to check remaining credits
-    const userProfile = await prisma.userProfile.findUnique({
-      where: { clerkUserId: userId }
-    });
-
-    // If no user profile exists, create one with default 50 remaining
     let remaining = 50;
-    if (userProfile) {
-      remaining = userProfile.remaining;
+    let userProfile = await prisma.userProfile.findUnique({ where: { clerkUserId: userId } });
+    
+    // If no user profile exists, create one with default 50 remaining
+    if (!userProfile) {
+      try {
+        const client = await clerkClient();
+        const user = await client.users.getUser(userId);
+        userProfile = await prisma.userProfile.create({
+          data: {
+            clerkUserId: userId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            imageUrl: user.imageUrl,
+            remaining: 50,
+            lastResetDate: new Date()
+          }
+        });
+        remaining = 50;
+      } catch (e) {
+        console.error('Error creating user profile:', e);
+        remaining = 50; // Default if creation fails
+      }
     } else {
-      // Create user profile with default remaining credits and user info from Clerk
-      const client = await clerkClient();
-      const user = await client.users.getUser(userId);
-      
-      await prisma.userProfile.create({
-        data: {
-          clerkUserId: userId,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          imageUrl: user.imageUrl,
-          remaining: 50,
-          lastResetDate: new Date()
-        }
-      });
+      remaining = userProfile.remaining;
     }
 
     return NextResponse.json({
@@ -107,7 +111,7 @@ export async function GET(request: NextRequest) {
         total,
         pages: Math.ceil(total / limit),
       },
-      remaining: remaining,
+      remaining,
     });
   } catch (error) {
     console.error('Error fetching contacts:', error);
@@ -117,11 +121,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { name, email, phone, agency, position, notes } = body;
 

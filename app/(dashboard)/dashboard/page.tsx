@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card } from '../../../components/UI';
-import { useUser } from '@clerk/nextjs';
+// 🔑 FIX 1: Import useAuth for reliable token fetching
+import { useUser, useAuth } from '@clerk/nextjs'; 
 import { Users, Building2, TrendingUp } from 'lucide-react';
 
 const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any) => {
@@ -47,31 +48,60 @@ interface DashboardStats {
 }
 
 export default function Dashboard() {
-  const { user: clerkUser } = useUser();
+  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
+  // 🔑 FIX 2: Destructure getToken and isLoaded from useAuth
+  const { getToken, isLoaded: isAuthLoaded } = useAuth();
+  
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string>('');
   
+  // Combine readiness checks
+  const isClerkReady = isUserLoaded && isAuthLoaded; 
+
   useEffect(() => {
     const loadDashboardData = async () => {
-      if (!clerkUser?.id) return;
+      // 🛑 FIX 3: Guard the fetch call until Clerk is fully loaded AND a user is present
+      if (!isClerkReady || !clerkUser?.id) {
+          if (isClerkReady && !clerkUser?.id) {
+              setLoading(false);
+          }
+          return;
+      }
       
       try {
-        const response = await fetch('/api/dashboard/stats');
+        // 🔑 FIX 4: Use the official and reliable getToken method
+        const token = await getToken();
+        
+        const headers: HeadersInit = token 
+          ? { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}` 
+            }
+          : { 'Content-Type': 'application/json' };
+
+        // 🛑 FIX 5: Add credentials: 'include' to ensure cookies are sent (crucial for localhost)
+        const response = await fetch('/api/dashboard/stats', { headers, credentials: 'include' });
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch dashboard stats');
+          const text = await response.text();
+          console.error('Dashboard stats response error:', response.status, text);
+          throw new Error(`Failed to fetch dashboard stats: ${response.status} ${text}`);
         }
         
         const data: DashboardStats = await response.json();
         setStats(data);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
+        setErrorMsg((error as Error)?.message || 'Unknown error');
       } finally {
         setLoading(false);
       }
     };
 
     loadDashboardData();
-  }, [clerkUser?.id]);
+    // 🔑 FIX 6: Include all dependencies, including the readiness state
+  }, [clerkUser?.id, getToken, isClerkReady]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -118,6 +148,11 @@ export default function Dashboard() {
           icon={TrendingUp} 
         />
       </div>
+      {errorMsg && (
+        <div className="p-3 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-sm text-red-700">
+          <strong>Error:</strong> {errorMsg}
+        </div>
+      )}
 
       {/* Usage Bar */}
       <Card className="p-6">

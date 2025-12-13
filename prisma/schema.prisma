@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // Load database URL from environment (Prisma reads .env automatically)
   url      = env("DATABASE_URL")
 }
 
