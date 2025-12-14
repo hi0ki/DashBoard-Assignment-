@@ -1,64 +1,61 @@
-# 🚀 InfinitiveByte Dashboard Assignment
+# 🚀 MyDashboardApp
 
-This project is a full-stack dashboard application built with Next.js, TypeScript, and Tailwind CSS. It is designed to manage and display statistics related to agencies and contacts, featuring secure authentication via Clerk and data persistence using Prisma with a Neon PostgreSQL database.
+A modern, high-performance dashboard application built with **Next.js 16**, **Clerk Authentication**, and **Prisma**.
+
+🔗 **Live Demo**: [mydashboard-hi0ki.vercel.app](https://mydashboard-hi0ki.vercel.app)
 
 ## ✨ Features
 
-* **Secure Authentication:** User sign-up and sign-in are handled securely using Clerk.
-* **Data Import/Seeding:** Bulk import utility to seed the database with initial agency and contact data from CSV files.
-* **Dashboard Statistics:** Displays key metrics like total contacts, tracked agencies, and daily API usage limits.
-* **User Profile & Usage Tracking:** Stores and manages individual user profiles and tracks their daily credit consumption.
-* **Daily Reset Cron Job:** Includes an API route to reset daily usage credits for all users.
+- **🔐 Secure Authentication**: Integrated with Clerk for seamless Login/Register flows.
+- **🎨 "Pro" Aesthetic**: Clean Interface with Zinc/Dark themes and premium gradients.
+- **📊 Real-time Dashboard**: Track agencies, contacts, and daily credit usage.
+- **👥 Contact Management**: View recently unlocked profiles with smart "Recently Viewed" sorting.
+- **⚡ Modern Tech Stack**: Fast, responsive, and type-safe.
 
 ## 🛠️ Tech Stack
 
-* **Framework:** Next.js (App Router)
-* **Language:** TypeScript, JavaScript, JSX
-* **Database:** Neon (PostgreSQL)
-* **ORM:** Prisma
-* **Authentication:** Clerk
-* **Styling:** Tailwind CSS
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS + Lucide Icons
+- **Auth**: Clerk (Custom Auth Pages)
+- **Database**: PostgreSQL with Prisma ORM
 
-## 📋 Getting Started
+## 🚀 Getting Started
 
-### Prerequisites
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-1.  **Node.js:** (v18.x or later)
-2.  **Neon Account:** Create a free account and get your PostgreSQL connection string.
-3.  **Clerk Account:** Create a free account and obtain your Publishable and Secret Keys.
+2. **Environment Setup**
+   Create a `.env` file in the root directory. Here is an example configuration:
 
-### Installation
+   ```env
+   # Database (Neon/PostgreSQL)
+   DATABASE_URL="postgresql://user:password@host:5432/dbname?sslmode=require"
 
-1.  Clone the repository:
-    ```bash
-    git clone [repository URL]
-    cd DashBoard-Assignment-
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_EXAMPLE123..."
+   CLERK_SECRET_KEY="sk_test_EXAMPLE123..."
+   
+   # Clerk Routes
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth/login
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth/register
+   ```
 
-### Environment Variables
+3. **Database Setup**
+   Generate the client and seed the database with initial data:
+   ```bash
+   npx prisma generate
+   npx tsx scripts/import-data.ts
+   ```
 
-Create a file named `.env.local` in the root of the project and populate it with your credentials:
+4. **Run the Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view it.
 
-```env
-# Database Connection String from Neon
-DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
+## 📜 Useful Commands
 
-# Clerk Keys (Use test keys for local development)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
-CLERK_WEBHOOK_SECRET=whsec_...
-
-# Required for local development with test keys
-NEXT_PUBLIC_CLERK_API_URL="[https://api.clerk.dev](https://api.clerk.dev)" 
-CLERK_TRUST_HOST=true
-CLERK_COOKIE_DOMAIN="localhost"
-
-# Optional: Custom sign-up/sign-in URLs
-NEXT_PUBLIC_CLERK_SIGN_UP_URL="/auth/register"
-NEXT_PUBLIC_CLERK_SIGN_IN_URL="/auth/login"
+- `npm run dev` - Start the development server
+- `npx prisma studio` - Open the database GUI to view/edit data
