@@ -35,7 +35,9 @@ interface Pagination {
   limit: number;
 }
 
-export default function ContactsPage() {
+import { Suspense } from 'react';
+
+function ContactsContent() {
   // Auth disabled
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'viewed' | 'unviewed'>('unviewed');
@@ -425,5 +427,17 @@ export default function ContactsPage() {
         <span>Clicking "View" will consume 1 credit and move contact to viewed section.</span>
       </div>
     </div>
+  );
+}
+
+export default function ContactsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <ContactsContent />
+    </Suspense>
   );
 }
