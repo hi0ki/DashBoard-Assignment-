@@ -210,7 +210,7 @@ export default function ContactsPage() {
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Credits reset daily at 00:00 AM. To continue revealing contacts now, upgrade your plan.</p>
                     </div>
                     <div className="flex-shrink-0 flex items-center">
-                      <Link href="/profile" className="inline-block px-3 py-1.5 bg-primary-600 text-white text-xs rounded-md hover:bg-primary-500">
+                      <Link href="/upgrade" className="inline-block px-3 py-1.5 bg-primary-600 text-white text-xs rounded-md hover:bg-primary-500">
                         Upgrade Plan
                       </Link>
                     </div>

@@ -10,6 +10,7 @@ import {
   Users,
   UserCircle,
   LogOut,
+  Crown,
   Sun,
   Moon,
   Menu,
@@ -110,6 +111,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <SidebarItem href="/agencies" icon={Building2} label="Agencies" onClick={() => setSidebarOpen(false)} />
           <SidebarItem href="/contacts" icon={Users} label="Contacts" onClick={() => setSidebarOpen(false)} />
           <SidebarItem href="/profile" icon={UserCircle} label="Profile" onClick={() => setSidebarOpen(false)} />
+          <SidebarItem href="/upgrade" icon={Crown} label="Upgrade" onClick={() => setSidebarOpen(false)} />
 
           <button
             onClick={() => signOut()}
