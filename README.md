@@ -1,25 +1,24 @@
-# 🚀 MyDashboardApp
+# MyDashboardApp
 
-A modern, high-performance dashboard application built with **Next.js 16**, **Clerk Authentication**, and **Prisma**.
+MyDashboardApp is a modern dashboard built with Next.js 16, Clerk, and Prisma. It allows you to manage agencies and contacts efficiently with a clean, professional interface and daily credit tracking.
 
-🔗 **Live Demo**: [mydashboard-hi0ki.vercel.app](https://mydashboard-hi0ki.vercel.app)
+Live Demo: [mydashboard-hi0ki.vercel.app](https://mydashboard-hi0ki.vercel.app)
 
-## ✨ Features
+## Features
 
-- **🔐 Secure Authentication**: Integrated with Clerk for seamless Login/Register flows.
-- **🎨 "Pro" Aesthetic**: Clean Interface with Zinc/Dark themes and premium gradients.
-- **📊 Real-time Dashboard**: Track agencies, contacts, and daily credit usage.
-- **👥 Contact Management**: View recently unlocked profiles with smart "Recently Viewed" sorting.
-- **⚡ Modern Tech Stack**: Fast, responsive, and type-safe.
+- **Authentication**: Integrated with Clerk for seamless Login/Register flows.
+- **Design**: Clean "Pro" interface with Dark mode support.
+- **Dashboard**: Track agencies, contacts, and usage stats in real-time.
+- **Contact Management**: View unlocked profiles with smart sorting.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **Styling**: Tailwind CSS + Lucide Icons
-- **Auth**: Clerk (Custom Auth Pages)
-- **Database**: PostgreSQL with Prisma ORM
+- **Framework**: Next.js 16
+- **Styling**: Tailwind CSS
+- **Auth**: Clerk
+- **Database**: PostgreSQL with Prisma
 
-## 🚀 Getting Started
+## Getting Started
 
 1. **Install Dependencies**
    ```bash
@@ -27,7 +26,7 @@ A modern, high-performance dashboard application built with **Next.js 16**, **Cl
    ```
 
 2. **Environment Setup**
-   Create a `.env` file in the root directory. Here is an example configuration:
+   Create a `.env` file in the root directory:
 
    ```env
    # Database (Neon/PostgreSQL)
@@ -43,7 +42,7 @@ A modern, high-performance dashboard application built with **Next.js 16**, **Cl
    ```
 
 3. **Database Setup**
-   Generate the client and seed the database with initial data:
+   Generate the client and seed the database:
    ```bash
    npx prisma generate
    npx tsx scripts/import-data.ts
@@ -55,7 +54,7 @@ A modern, high-performance dashboard application built with **Next.js 16**, **Cl
    ```
    Open [http://localhost:3000](http://localhost:3000) to view it.
 
-## 📜 Useful Commands
+## Useful Commands
 
 - `npm run dev` - Start the development server
-- `npx prisma studio` - Open the database GUI to view/edit data
+- `npx prisma studio` - Open the database GUI

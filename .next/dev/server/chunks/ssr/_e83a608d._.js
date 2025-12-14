@@ -111,7 +111,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 ;
 ;
 ;
-function ContactsPage() {
+;
+function ContactsContent() {
     // Auth disabled
     const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const [activeTab, setActiveTab] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('unviewed');
@@ -252,12 +253,12 @@ function ContactsPage() {
                 className: "animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                lineNumber: 193,
+                lineNumber: 195,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-            lineNumber: 192,
+            lineNumber: 194,
             columnNumber: 7
         }, this);
     }
@@ -275,7 +276,7 @@ function ContactsPage() {
                                 children: "Contacts"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                lineNumber: 202,
+                                lineNumber: 204,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -283,7 +284,7 @@ function ContactsPage() {
                                 children: "Access contact details of your network"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                lineNumber: 203,
+                                lineNumber: 205,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -303,13 +304,13 @@ function ContactsPage() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                lineNumber: 204,
+                                lineNumber: 206,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                        lineNumber: 201,
+                        lineNumber: 203,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -325,7 +326,7 @@ function ContactsPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 211,
+                                    lineNumber: 213,
                                     columnNumber: 13
                                 }, this),
                                 remaining === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -343,7 +344,7 @@ function ContactsPage() {
                                                             children: "You have used all your credits"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                            lineNumber: 219,
+                                                            lineNumber: 221,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -351,13 +352,13 @@ function ContactsPage() {
                                                             children: "Credits reset daily at 00:00 AM. To continue revealing contacts now, upgrade your plan."
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                            lineNumber: 220,
+                                                            lineNumber: 222,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                    lineNumber: 218,
+                                                    lineNumber: 220,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -368,28 +369,28 @@ function ContactsPage() {
                                                         children: "Upgrade Plan"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                        lineNumber: 223,
+                                                        lineNumber: 225,
                                                         columnNumber: 23
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                    lineNumber: 222,
+                                                    lineNumber: 224,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                            lineNumber: 217,
+                                            lineNumber: 219,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                        lineNumber: 216,
+                                        lineNumber: 218,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 215,
+                                    lineNumber: 217,
                                     columnNumber: 15
                                 }, this),
                                 error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -397,24 +398,24 @@ function ContactsPage() {
                                     children: error
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 232,
+                                    lineNumber: 234,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                            lineNumber: 210,
+                            lineNumber: 212,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                        lineNumber: 209,
+                        lineNumber: 211,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                lineNumber: 200,
+                lineNumber: 202,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -428,14 +429,14 @@ function ContactsPage() {
                                 size: 16
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                lineNumber: 249,
+                                lineNumber: 251,
                                 columnNumber: 11
                             }, this),
                             "Unviewed"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                        lineNumber: 242,
+                        lineNumber: 244,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -446,20 +447,20 @@ function ContactsPage() {
                                 size: 16
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                lineNumber: 259,
+                                lineNumber: 261,
                                 columnNumber: 11
                             }, this),
                             "Viewed"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                        lineNumber: 252,
+                        lineNumber: 254,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                lineNumber: 241,
+                lineNumber: 243,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -472,12 +473,12 @@ function ContactsPage() {
                     className: "flex-1 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 }, void 0, false, {
                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                    lineNumber: 266,
+                    lineNumber: 268,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                lineNumber: 265,
+                lineNumber: 267,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -492,54 +493,54 @@ function ContactsPage() {
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider",
+                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider bg-zinc-50 dark:bg-zinc-950",
                                             children: "Name"
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                            lineNumber: 280,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider",
-                                            children: "Job Title"
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                            lineNumber: 281,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider",
-                                            children: "Department"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
                                             lineNumber: 282,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider",
-                                            children: "Contact Info"
+                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider bg-zinc-50 dark:bg-zinc-950",
+                                            children: "Job Title"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
                                             lineNumber: 283,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider",
-                                            children: "Action"
+                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider bg-zinc-50 dark:bg-zinc-950",
+                                            children: "Department"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
                                             lineNumber: 284,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
+                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider bg-zinc-50 dark:bg-zinc-950",
+                                            children: "Contact Info"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(dashboard)/contacts/page.tsx",
+                                            lineNumber: 285,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
+                                            className: "px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider bg-zinc-50 dark:bg-zinc-950",
+                                            children: "Action"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(dashboard)/contacts/page.tsx",
+                                            lineNumber: 286,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 279,
+                                    lineNumber: 281,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                lineNumber: 278,
+                                lineNumber: 280,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -551,12 +552,12 @@ function ContactsPage() {
                                         children: "Loading contacts..."
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                        lineNumber: 290,
+                                        lineNumber: 292,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 289,
+                                    lineNumber: 291,
                                     columnNumber: 17
                                 }, this) : contacts.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -565,12 +566,12 @@ function ContactsPage() {
                                         children: activeTab === 'viewed' ? 'No contacts viewed yet' : 'No unviewed contacts available'
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                        lineNumber: 296,
+                                        lineNumber: 298,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 295,
+                                    lineNumber: 297,
                                     columnNumber: 17
                                 }, this) : contacts.map((contact)=>{
                                     const isViewed = contact.isViewed;
@@ -582,7 +583,7 @@ function ContactsPage() {
                                                 children: contact.name
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                lineNumber: 305,
+                                                lineNumber: 307,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -590,7 +591,7 @@ function ContactsPage() {
                                                 children: contact.position
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                lineNumber: 308,
+                                                lineNumber: 310,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -598,7 +599,7 @@ function ContactsPage() {
                                                 children: contact.department
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                lineNumber: 311,
+                                                lineNumber: 313,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -613,7 +614,7 @@ function ContactsPage() {
                                                                 children: contact.email
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                                lineNumber: 318,
+                                                                lineNumber: 320,
                                                                 columnNumber: 31
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -621,13 +622,13 @@ function ContactsPage() {
                                                                 children: contact.phone
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                                lineNumber: 319,
+                                                                lineNumber: 321,
                                                                 columnNumber: 31
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                        lineNumber: 317,
+                                                        lineNumber: 319,
                                                         columnNumber: 29
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "flex items-center text-zinc-400",
@@ -636,22 +637,22 @@ function ContactsPage() {
                                                             children: "••••••••••••••••"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                            lineNumber: 323,
+                                                            lineNumber: 325,
                                                             columnNumber: 31
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                        lineNumber: 322,
+                                                        lineNumber: 324,
                                                         columnNumber: 29
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                    lineNumber: 315,
+                                                    lineNumber: 317,
                                                     columnNumber: 25
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                lineNumber: 314,
+                                                lineNumber: 316,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -668,7 +669,7 @@ function ContactsPage() {
                                                                 className: "mr-1.5"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                                lineNumber: 337,
+                                                                lineNumber: 339,
                                                                 columnNumber: 31
                                                             }, this),
                                                             "Revealed"
@@ -680,7 +681,7 @@ function ContactsPage() {
                                                                 className: "mr-1.5"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                                lineNumber: 342,
+                                                                lineNumber: 344,
                                                                 columnNumber: 31
                                                             }, this),
                                                             "View"
@@ -688,40 +689,40 @@ function ContactsPage() {
                                                     }, void 0, true)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                    lineNumber: 329,
+                                                    lineNumber: 331,
                                                     columnNumber: 25
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                                lineNumber: 328,
+                                                lineNumber: 330,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, contact.id, true, {
                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                        lineNumber: 304,
+                                        lineNumber: 306,
                                         columnNumber: 21
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                lineNumber: 287,
+                                lineNumber: 289,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                        lineNumber: 277,
+                        lineNumber: 279,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                    lineNumber: 276,
+                    lineNumber: 278,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                lineNumber: 275,
+                lineNumber: 277,
                 columnNumber: 7
             }, this),
             totalPages > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -739,14 +740,14 @@ function ContactsPage() {
                                     size: 16
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 367,
+                                    lineNumber: 369,
                                     columnNumber: 15
                                 }, this),
                                 "Previous"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                            lineNumber: 361,
+                            lineNumber: 363,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -772,7 +773,7 @@ function ContactsPage() {
                                         children: pageNum
                                     }, pageNum, false, {
                                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                        lineNumber: 385,
+                                        lineNumber: 387,
                                         columnNumber: 19
                                     }, this);
                                 }),
@@ -783,7 +784,7 @@ function ContactsPage() {
                                             children: "..."
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                            lineNumber: 398,
+                                            lineNumber: 400,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$UI$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -793,7 +794,7 @@ function ContactsPage() {
                                             children: totalPages
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                            lineNumber: 399,
+                                            lineNumber: 401,
                                             columnNumber: 19
                                         }, this)
                                     ]
@@ -801,7 +802,7 @@ function ContactsPage() {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                            lineNumber: 371,
+                            lineNumber: 373,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$UI$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -815,24 +816,24 @@ function ContactsPage() {
                                     size: 16
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                                    lineNumber: 417,
+                                    lineNumber: 419,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                            lineNumber: 410,
+                            lineNumber: 412,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                    lineNumber: 360,
+                    lineNumber: 362,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                lineNumber: 359,
+                lineNumber: 361,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -842,26 +843,53 @@ function ContactsPage() {
                         size: 12
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                        lineNumber: 424,
+                        lineNumber: 426,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: 'Clicking "View" will consume 1 credit and move contact to viewed section.'
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                        lineNumber: 425,
+                        lineNumber: 427,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-                lineNumber: 423,
+                lineNumber: 425,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(dashboard)/contacts/page.tsx",
-        lineNumber: 199,
+        lineNumber: 201,
+        columnNumber: 5
+    }, this);
+}
+function ContactsPage() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Suspense"], {
+        fallback: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "min-h-screen flex items-center justify-center",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+            }, void 0, false, {
+                fileName: "[project]/app/(dashboard)/contacts/page.tsx",
+                lineNumber: 437,
+                columnNumber: 9
+            }, void 0)
+        }, void 0, false, {
+            fileName: "[project]/app/(dashboard)/contacts/page.tsx",
+            lineNumber: 436,
+            columnNumber: 7
+        }, void 0),
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ContactsContent, {}, void 0, false, {
+            fileName: "[project]/app/(dashboard)/contacts/page.tsx",
+            lineNumber: 440,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/app/(dashboard)/contacts/page.tsx",
+        lineNumber: 435,
         columnNumber: 5
     }, this);
 }

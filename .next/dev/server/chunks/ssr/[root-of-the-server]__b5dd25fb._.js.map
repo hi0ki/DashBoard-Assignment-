@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///mnt/c/Users/HiKi/OneDrive/Desktop/projects/infinitivebyte-dashboard/DashBoard-Assignment-/app/page.jsx"],"sourcesContent":["import { redirect } from 'next/navigation';\r\n\r\nexport default function Home() {\r\n  redirect('/auth');\r\n}\r\n"],"names":[],"mappings":";;;;AAAA;AAAA;;AAEe,SAAS;IACtB,IAAA,iMAAQ,EAAC;AACX"}}]
+}

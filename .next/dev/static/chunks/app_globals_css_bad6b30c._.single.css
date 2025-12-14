@@ -1123,11 +1123,6 @@ img, video {
   background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 
-.bg-gray-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
-}
-
 .bg-gray-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
@@ -1264,12 +1259,6 @@ img, video {
 .from-purple-500 {
   --tw-gradient-from: #a855f7 var(--tw-gradient-from-position);
   --tw-gradient-to: #a855f700 var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-.from-purple-600 {
-  --tw-gradient-from: #9333ea var(--tw-gradient-from-position);
-  --tw-gradient-to: #9333ea00 var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -1940,6 +1929,14 @@ img, video {
   transition-duration: .5s;
 }
 
+.\[-ms-overflow-style\:\'none\'\] {
+  -ms-overflow-style: "none";
+}
+
+.\[scrollbar-width\:\'none\'\] {
+  scrollbar-width: "none";
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -2082,20 +2079,15 @@ a {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-.hover\:from-purple-700:hover {
-  --tw-gradient-from: #7e22ce var(--tw-gradient-from-position);
-  --tw-gradient-to: #7e22ce00 var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
 .hover\:from-red-600:hover {
   --tw-gradient-from: #dc2626 var(--tw-gradient-from-position);
   --tw-gradient-to: #dc262600 var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-.hover\:to-blue-800:hover {
-  --tw-gradient-to: #1e40af var(--tw-gradient-to-position);
+.hover\:via-indigo-700:hover {
+  --tw-gradient-to: #4338ca00 var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), #4338ca var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 
 .hover\:to-pink-700:hover {
@@ -2104,10 +2096,6 @@ a {
 
 .hover\:to-purple-700:hover {
   --tw-gradient-to: #7e22ce var(--tw-gradient-to-position);
-}
-
-.hover\:to-purple-800:hover {
-  --tw-gradient-to: #6b21a8 var(--tw-gradient-to-position);
 }
 
 .hover\:text-gray-900:hover {
@@ -2675,6 +2663,10 @@ a {
   .xl\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
+
+.\[\&\:\:-webkit-scrollbar\]\:hidden::-webkit-scrollbar {
+  display: none;
 }
 
 /*# sourceMappingURL=app_globals_css_bad6b30c._.single.css.map*/
