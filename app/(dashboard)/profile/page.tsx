@@ -2,13 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Input } from '../../../components/UI';
-// Clerk removed - auth disabled
+import { useUser } from '@clerk/nextjs';
 import { Upload } from 'lucide-react';
 
 export default function Profile() {
-  // Auth disabled
-  const user = null;
-  const isLoaded = true;
+  const { user, isLoaded } = useUser();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
