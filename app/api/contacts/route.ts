@@ -14,15 +14,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Debug logs to help diagnose why contacts aren't showing
-    try {
-      const dbHost = process.env.DATABASE_URL ? process.env.DATABASE_URL.split('@')[1]?.split('?')[0] : 'unknown';
-      console.log('contacts API - DB host:', dbHost);
-      console.log('contacts API - auth userId:', userId);
-    } catch (e) {
-      console.log('contacts API - debug log error', e);
-    }
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -30,18 +21,9 @@ export async function GET(request: NextRequest) {
     const viewed = searchParams.get('viewed') === 'true';
     const skip = (page - 1) * limit;
 
-    if (!userId) {
-      // Not authenticated: return empty list and 0 credits
-      return NextResponse.json({
-        contacts: [],
-        pagination: { page, limit, total: 0, pages: 1 },
-        remaining: 0,
-      });
-    }
-
-    let whereClause: any = {};
+    let searchFilter: any = {};
     if (search) {
-      whereClause.OR = [
+      searchFilter.OR = [
         { name: { contains: search, mode: 'insensitive' as const } },
         { email: { contains: search, mode: 'insensitive' as const } },
         { agency: { contains: search, mode: 'insensitive' as const } },
@@ -49,37 +31,78 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Filter by view status for authenticated user
+    let contactsWithViewStatus = [];
+    let total = 0;
+
     if (viewed) {
-      whereClause.views = { some: { clerkUserId: userId } };
+      // If fetching VIEWED contacts, query ContactView directly to sort by viewedAt
+      const [views, count] = await Promise.all([
+        prisma.contactView.findMany({
+          where: {
+            clerkUserId: userId,
+            contact: search ? searchFilter : undefined
+          },
+          include: {
+            contact: true
+          },
+          skip,
+          take: limit,
+          orderBy: { viewedAt: 'desc' }, // Sort by most recently viewed
+        }),
+        prisma.contactView.count({
+          where: {
+            clerkUserId: userId,
+            contact: search ? searchFilter : undefined
+          }
+        }),
+      ]);
+
+      total = count;
+      contactsWithViewStatus = views.map(view => ({
+        id: view.contact.id,
+        name: view.contact.name,
+        email: view.contact.email,
+        phone: view.contact.phone,
+        agency: view.contact.agency,
+        position: view.contact.position,
+        department: view.contact.department,
+        isViewed: true,
+        viewedAt: view.viewedAt.toISOString(),
+      }));
+
     } else {
-      whereClause.views = { none: { clerkUserId: userId } };
+      // If fetching UNVIEWED contacts, query Contact model
+      const whereClause = {
+        ...searchFilter,
+        views: { none: { clerkUserId: userId } } // Filter out viewed contacts
+      };
+
+      const [contacts, count] = await Promise.all([
+        prisma.contact.findMany({
+          where: whereClause,
+          include: {
+            views: { where: { clerkUserId: userId }, select: { viewedAt: true } },
+          },
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+        }),
+        prisma.contact.count({ where: whereClause }),
+      ]);
+
+      total = count;
+      contactsWithViewStatus = contacts.map(contact => ({
+        id: contact.id,
+        name: contact.name,
+        email: contact.email,
+        phone: contact.phone,
+        agency: contact.agency,
+        position: contact.position,
+        department: contact.department,
+        isViewed: false, // By definition unviewed
+        viewedAt: null,
+      }));
     }
-
-    const [contacts, total] = await Promise.all([
-      prisma.contact.findMany({
-        where: whereClause,
-        include: {
-          views: { where: { clerkUserId: userId }, select: { viewedAt: true } },
-        },
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.contact.count({ where: whereClause }),
-    ]);
-
-    const contactsWithViewStatus = contacts.map(contact => ({
-      id: contact.id,
-      name: contact.name,
-      email: contact.email,
-      phone: contact.phone,
-      agency: contact.agency,
-      position: contact.position,
-      department: contact.department,
-      isViewed: contact.views.length > 0,
-      viewedAt: contact.views[0]?.viewedAt?.toISOString() || null,
-    }));
 
     // Get user profile to check remaining credits
     let remaining = 50;

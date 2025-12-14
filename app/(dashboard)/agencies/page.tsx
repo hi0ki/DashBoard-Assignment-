@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, Button } from '../../../components/UI';
+import { Button } from '../../../components/UI';
 import { Agency } from '../../../types';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 
@@ -33,12 +33,12 @@ export default function Agencies() {
         limit: agenciesPerPage.toString(),
         ...(search && { search }),
       });
-      
+
       const response = await fetch(`/api/agencies?${params}`);
       if (!response.ok) {
         throw new Error('Failed to fetch agencies');
       }
-      
+
       const data: AgenciesResponse = await response.json();
       setAgencies(data.agencies);
       setTotalPages(data.pagination.pages);
@@ -104,44 +104,44 @@ export default function Agencies() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Agencies</h1>
-        <p className="text-gray-500 dark:text-gray-400">Manage your agency partners</p>
-        <p className="text-sm text-gray-400 dark:text-gray-500">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Agencies</h1>
+        <p className="text-zinc-500 dark:text-zinc-400">Manage your agency partners</p>
+        <p className="text-sm text-zinc-400 dark:text-zinc-500">
           Showing {startIndex + 1}-{endIndex} of {totalAgencies} agencies (Page {currentPage} of {totalPages})
         </p>
       </div>
 
       {/* Search Bar */}
-      <Card className="p-4">
+      <div className="p-4 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+            <Search className="h-5 w-5 text-zinc-400" />
           </div>
           <input
             type="text"
             placeholder="Search agencies by name, type, state, or county..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="block w-full pl-10 pr-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg leading-5 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-      </Card>
+      </div>
 
-      <Card className="overflow-hidden">
+      <div className="overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
+          <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+            <thead className="bg-zinc-50 dark:bg-zinc-950">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">State</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">State Code</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Population</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Website</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">County</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">State</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">State Code</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Population</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Website</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">County</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-800">
               {loading ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
@@ -156,28 +156,28 @@ export default function Agencies() {
                 </tr>
               ) : (
                 agencies.map((agency) => (
-                  <tr key={agency.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                  <tr key={agency.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
                       {agency.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                       {agency.state}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                       {agency.state_code}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                       {agency.type}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                       {agency.population?.toLocaleString()}
                     </td>
-                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-600 dark:text-primary-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-600 dark:text-primary-400">
                       <a href={agency.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
                         {agency.website}
                       </a>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                       {agency.county}
                     </td>
                   </tr>
@@ -186,11 +186,11 @@ export default function Agencies() {
             </tbody>
           </table>
         </div>
-      </Card>
-      
+      </div>
+
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <Card className="p-4">
+        <div className="p-4 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
@@ -201,7 +201,7 @@ export default function Agencies() {
               <ChevronLeft size={16} />
               Previous
             </Button>
-            
+
             <div className="flex items-center gap-2">
               {/* Page numbers */}
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -215,7 +215,7 @@ export default function Agencies() {
                 } else {
                   pageNum = currentPage - 2 + i;
                 }
-                
+
                 return (
                   <Button
                     key={pageNum}
@@ -227,7 +227,7 @@ export default function Agencies() {
                   </Button>
                 );
               })}
-              
+
               {totalPages > 5 && currentPage < totalPages - 2 && (
                 <>
                   <span className="text-gray-500">...</span>
@@ -241,7 +241,7 @@ export default function Agencies() {
                 </>
               )}
             </div>
-            
+
             <Button
               variant="outline"
               onClick={goToNextPage}
@@ -252,7 +252,7 @@ export default function Agencies() {
               <ChevronRight size={16} />
             </Button>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card } from '../../../components/UI';
+import { Button } from '../../../components/UI';
 import { Check, Zap, Crown, Rocket, ArrowRight } from 'lucide-react';
 
 const plans = [
@@ -18,7 +18,7 @@ const plans = [
             'Basic analytics'
         ],
         icon: Zap,
-        color: 'from-gray-400 to-gray-600',
+        color: 'from-zinc-400 to-zinc-600',
         buttonText: 'Current Plan',
         disabled: true
     },
@@ -71,31 +71,31 @@ export default function Upgrade() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="max-w-7xl mx-auto space-y-12 pb-12">
             {/* Header */}
-            <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800">
+            <div className="text-center space-y-4 pt-8">
+                <h1 className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">
                     Choose Your Plan
                 </h1>
-                <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
                     Unlock more features and grow your business with our premium plans
                 </p>
 
                 {/* Billing Toggle */}
-                <div className="flex items-center justify-center gap-4 mt-8 mb-6">
-                    <span className={`text-sm font-medium ${billingCycle === 'monthly' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
+                <div className="flex items-center justify-center gap-4 mt-8">
+                    <span className={`text-sm font-medium ${billingCycle === 'monthly' ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'}`}>
                         Monthly
                     </span>
                     <button
                         onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
                         className={`relative w-16 h-9 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 ${billingCycle === 'yearly'
                             ? 'bg-gradient-to-r from-green-400 to-green-600 dark:from-emerald-500 dark:to-emerald-700'
-                            : 'bg-gray-200 dark:bg-gray-700'
+                            : 'bg-zinc-200 dark:bg-zinc-700'
                             }`}
                     >
-                        <div className={`absolute top-1 left-1 w-7 h-7 bg-white dark:bg-gray-100 rounded-full shadow-md transform transition-transform ${billingCycle === 'yearly' ? 'translate-x-7' : ''}`} />
+                        <div className={`absolute top-1 left-1 w-7 h-7 bg-white dark:bg-zinc-100 rounded-full shadow-md transform transition-transform ${billingCycle === 'yearly' ? 'translate-x-7' : ''}`} />
                     </button>
-                    <span className={`text-sm font-medium ${billingCycle === 'yearly' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
+                    <span className={`text-sm font-medium ${billingCycle === 'yearly' ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'}`}>
                         Yearly
                         <span className="ml-2 text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded-full">
                             Save 20%
@@ -105,7 +105,7 @@ export default function Upgrade() {
             </div>
 
             {/* Pricing Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-32">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {plans.map((plan) => {
                     const Icon = plan.icon;
                     const yearlyPrice = plan.price === '$0' ? '$0' : `$${Math.round(parseInt(plan.price.slice(1)) * 12 * 0.8)}`;
@@ -113,9 +113,12 @@ export default function Upgrade() {
                     const displayPeriod = billingCycle === 'yearly' ? 'per year' : plan.period;
 
                     return (
-                        <Card
+                        <div
                             key={plan.name}
-                            className={`relative pt-8 pb-6 px-6 ${plan.popular ? 'ring-2 ring-primary-500 shadow-2xl scale-105' : ''} hover:shadow-xl transition-all duration-300`}
+                            className={`relative pt-8 pb-6 px-6 rounded-3xl border ${plan.popular
+                                ? 'bg-white dark:bg-zinc-900 border-blue-500/50 dark:border-blue-500/50 shadow-xl shadow-blue-500/10 scale-105 z-10'
+                                : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-sm'
+                                } transition-all duration-300 hover:shadow-xl`}
                         >
                             {plan.popular && (
                                 <div className="absolute -top-3 -right-3 z-10">
@@ -132,23 +135,23 @@ export default function Upgrade() {
                                 </div>
 
                                 {/* Plan Name */}
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                                <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
                                     {plan.name}
                                 </h3>
 
                                 {/* Description */}
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                <p className="text-sm text-zinc-600 dark:text-zinc-400">
                                     {plan.description}
                                 </p>
 
                                 {/* Price */}
                                 <div className="py-3">
                                     <div className="flex items-baseline justify-center gap-2">
-                                        <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300">
+                                        <span className="text-4xl font-bold text-zinc-900 dark:text-white">
                                             {displayPrice}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
                                         {displayPeriod}
                                     </p>
                                 </div>
@@ -157,11 +160,9 @@ export default function Upgrade() {
                                 <button
                                     onClick={() => handleUpgrade(plan.name)}
                                     disabled={plan.disabled}
-                                    className={`w-full py-2.5 px-5 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 mt-4 ${plan.disabled
-                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
-                                        : plan.popular
-                                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 active:from-blue-700 active:to-purple-800 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0'
-                                            : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 active:from-blue-700 active:to-purple-800 dark:from-purple-600 dark:to-blue-700 dark:hover:from-purple-700 dark:hover:to-blue-800 dark:active:from-purple-800 dark:active:to-blue-900 shadow-md hover:shadow-lg'
+                                    className={`w-full py-3 px-5 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 mt-4 ${plan.disabled
+                                        ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-500'
+                                        : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 active:scale-95 shadow-lg shadow-blue-500/25'
                                         }`}
                                 >
                                     {plan.buttonText}
@@ -170,64 +171,65 @@ export default function Upgrade() {
                             </div>
 
                             {/* Features List */}
-                            <div className="mt-6 space-y-3">
-                                <div className="h-px bg-gray-200 dark:bg-gray-700" />
-                                <ul className="space-y-3">
+                            <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800/50 space-y-3">
+                                <ul className="space-y-4">
                                     {plan.features.map((feature, index) => (
-                                        <li key={index} className="flex items-start gap-3">
-                                            <Check size={20} className="text-green-500 flex-shrink-0 mt-0.5" />
-                                            <span className="text-sm text-gray-600 dark:text-gray-300">
+                                        <li key={index} className="flex items-start gap-3 text-left">
+                                            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mt-0.5">
+                                                <Check size={12} className="text-green-600 dark:text-green-400" />
+                                            </div>
+                                            <span className="text-sm text-zinc-600 dark:text-zinc-400">
                                                 {feature}
                                             </span>
                                         </li>
                                     ))}
                                 </ul>
                             </div>
-                        </Card>
+                        </div>
                     );
                 })}
             </div>
 
             {/* FAQ Section */}
-            <Card className="p-8 mt-16">
-                <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">
+            <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm mt-16">
+                <h2 className="text-2xl font-bold text-center text-zinc-900 dark:text-white mb-8">
                     Frequently Asked Questions
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-zinc-900 dark:text-white">
                             Can I change plans later?
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
                             Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.
                         </p>
                     </div>
-                    <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-zinc-900 dark:text-white">
                             What payment methods do you accept?
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
                             We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.
                         </p>
                     </div>
-                    <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-zinc-900 dark:text-white">
                             Is there a free trial?
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
                             The Free plan is available forever. Pro and Enterprise plans offer a 14-day free trial.
                         </p>
                     </div>
-                    <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-zinc-900 dark:text-white">
                             Can I cancel anytime?
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
                             Absolutely! Cancel anytime with no questions asked. You'll retain access until the end of your billing period.
                         </p>
                     </div>
                 </div>
-            </Card>
+            </div>
         </div>
     );
 }

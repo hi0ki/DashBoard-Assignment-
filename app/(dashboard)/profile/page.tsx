@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Input } from '../../../components/UI';
+import { Button, Input } from '../../../components/UI';
 import { useUser } from '@clerk/nextjs';
-import { Upload } from 'lucide-react';
+import { Upload, User, Mail, Phone, FileText, Camera } from 'lucide-react';
 
 export default function Profile() {
   const { user, isLoaded } = useUser();
@@ -18,7 +18,6 @@ export default function Profile() {
 
   useEffect(() => {
     if (user) {
-      // Only load profile from database
       loadProfile();
     }
   }, [user]);
@@ -32,7 +31,6 @@ export default function Profile() {
       if (response.ok) {
         const profile = await response.json();
         if (profile) {
-          // User has a profile in database
           setFirstName(profile.firstName || '');
           setLastName(profile.lastName || '');
           setProfileImage(profile.imageUrl || '');
@@ -40,16 +38,13 @@ export default function Profile() {
           setPhone(profile.phone || '');
         }
       } else if (response.status === 404) {
-        // No profile exists, create one automatically from Clerk data
         await createInitialProfile();
       } else {
-        // Use Clerk data as fallback
         setFirstName(user?.firstName || '');
         setLastName(user?.lastName || '');
       }
     } catch (error) {
       console.error('Error loading profile:', error);
-      // Fallback to Clerk data on error
       setFirstName(user?.firstName || '');
       setLastName(user?.lastName || '');
     } finally {
@@ -75,39 +70,30 @@ export default function Profile() {
 
       if (response.ok) {
         const profile = await response.json();
-        // Set the form with the created profile data
         setFirstName(profile.firstName || '');
         setLastName(profile.lastName || '');
         setProfileImage(profile.imageUrl || '');
         setBio(profile.bio || '');
         setPhone(profile.phone || '');
-        console.log('Initial profile created automatically');
       }
     } catch (error) {
       console.error('Error creating initial profile:', error);
-      // Fallback to Clerk data
-      setFirstName(user?.firstName || '');
-      setLastName(user?.lastName || '');
-      setProfileImage(user?.imageUrl || '');
     }
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (max 1MB)
       if (file.size > 1024 * 1024) {
         setMessage('Image size must be less than 1MB');
         return;
       }
 
-      // Create a compressed version
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       const img = new Image();
 
       img.onload = () => {
-        // Resize to max 300x300 to reduce size
         const maxSize = 300;
         let { width, height } = img;
 
@@ -127,7 +113,6 @@ export default function Profile() {
         canvas.height = height;
         ctx?.drawImage(img, 0, 0, width, height);
 
-        // Convert to base64 with reduced quality
         const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
         setProfileImage(compressedDataUrl);
       };
@@ -144,7 +129,6 @@ export default function Profile() {
     setMessage('');
 
     try {
-      // Save to database
       const response = await fetch('/api/profile', {
         method: 'POST',
         headers: {
@@ -163,16 +147,15 @@ export default function Profile() {
         throw new Error('Failed to update profile');
       }
 
-      // Also update Clerk for consistency (optional)
       await user.update({
         firstName: firstName,
         lastName: lastName,
       });
 
-      setMessage('Profile updated successfully!');
+      setMessage('success:Profile updated successfully!');
     } catch (err) {
       console.error('Profile update error:', err);
-      setMessage('Failed to update profile.');
+      setMessage('error:Failed to update profile.');
     } finally {
       setLoading(false);
     }
@@ -187,133 +170,143 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
-        <p className="text-gray-500 dark:text-gray-400">Manage your account settings</p>
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Profile Settings</h1>
+        <p className="text-zinc-500 dark:text-zinc-400">Manage your account information and preferences.</p>
       </div>
 
-      <Card className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="relative overflow-hidden p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+        <form onSubmit={handleSubmit} className="relative z-10 space-y-10">
+
+          {/* Notification Message */}
           {message && (
-            <div className={`p-3 rounded-lg text-sm ${message.includes('success') ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-50 text-red-700'}`}>
-              {message}
+            <div className={`p-4 rounded-xl flex items-center gap-3 text-sm font-medium animate-in fade-in slide-in-from-top-2 ${message.includes('success')
+                ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800'
+                : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800'
+              }`}>
+              {message.replace('success:', '').replace('error:', '')}
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex flex-col items-center space-y-4">
-              <div className="relative h-32 w-32 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-md group">
-                {profileImage ? (
-                  <img src={profileImage} alt="Profile" className="h-full w-full object-cover" />
-                ) : user.imageUrl ? (
-                  <img src={user.imageUrl} alt="Profile" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center text-4xl font-bold text-gray-400">
-                    {user.firstName?.charAt(0) || user.username?.charAt(0) || 'U'}
-                  </div>
-                )}
+          <div className="flex flex-col md:flex-row gap-12">
 
-                {/* Overlay for hover effect */}
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                  <span className="text-white text-xs font-medium">Change</span>
+            {/* Avatar Section */}
+            <div className="flex flex-col items-center space-y-6">
+              <div className="relative group">
+                <div className="h-40 w-40 rounded-full overflow-hidden border-4 border-white dark:border-zinc-800 shadow-xl ring-2 ring-zinc-100 dark:ring-zinc-800">
+                  {profileImage ? (
+                    <img src={profileImage} alt="Profile" className="h-full w-full object-cover" />
+                  ) : user.imageUrl ? (
+                    <img src={user.imageUrl} alt="Profile" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-5xl font-bold text-zinc-400">
+                      {user.firstName?.charAt(0) || 'U'}
+                    </div>
+                  )}
                 </div>
 
-                {/* Hidden file input */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-
-              <div className="text-center">
-                <button type="button" className="relative text-sm text-primary-600 font-medium hover:text-primary-500">
-                  <span>Change Profile Picture</span>
+                <label className="absolute bottom-1 right-1 p-2.5 rounded-full bg-blue-600 text-white shadow-lg cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-200 group-hover:block">
+                  <Camera size={20} />
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="hidden"
                   />
-                </button>
-                <p className="text-xs text-gray-500 mt-1">JPG, GIF or PNG. Max 1MB.</p>
-                <p className="text-xs text-gray-400 mt-1">Default: Gmail profile picture</p>
+                </label>
+              </div>
+
+              <div className="text-center space-y-1">
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Profile Photo</h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">JPG, GIF or PNG. Max 1MB.</p>
               </div>
             </div>
 
-            <div className="flex-1 w-full space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  First Name
-                </label>
-                <Input
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  placeholder="John"
-                />
+            {/* Form Fields */}
+            <div className="flex-1 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+                    <User size={16} /> First Name
+                  </label>
+                  <Input
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    placeholder="First Name"
+                    className="bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 focus:ring-blue-500 dark:focus:ring-blue-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+                    <User size={16} /> Last Name
+                  </label>
+                  <Input
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                    placeholder="Last Name"
+                    className="bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 focus:ring-blue-500 dark:focus:ring-blue-600"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Last Name
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+                  <Mail size={16} /> Email Address
                 </label>
-                <Input
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                  placeholder="Doe"
-                />
+                <div className="relative">
+                  <Input
+                    value={user.primaryEmailAddress?.emailAddress || 'No email'}
+                    disabled
+                    className="bg-zinc-100 dark:bg-zinc-900 text-zinc-500 border-zinc-200 dark:border-zinc-800 cursor-not-allowed pl-10"
+                  />
+                  <Mail size={16} className="absolute left-3 top-3 text-zinc-400" />
+                </div>
+                <p className="text-xs text-zinc-500 dark:text-zinc-500">Managed via Google Account</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email Address
-                </label>
-                <Input
-                  value={user.primaryEmailAddress?.emailAddress || 'No email'}
-                  disabled
-                  className="bg-gray-50 dark:bg-gray-800 cursor-not-allowed opacity-60"
-                />
-                <p className="text-xs text-gray-500 mt-1">Email cannot be changed here. Manage it in your Google account.</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Phone Number
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+                  <Phone size={16} /> Phone Number
                 </label>
                 <Input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+1 (555) 000-0000"
+                  className="bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 focus:ring-blue-500 dark:focus:ring-blue-600"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Bio
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+                  <FileText size={16} /> Bio
                 </label>
                 <textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  placeholder="Tell us about yourself..."
+                  placeholder="Share a bit about yourself..."
                   rows={4}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-zinc-400 dark:placeholder-zinc-600 resize-none text-sm"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end pt-6 border-t border-gray-200 dark:border-gray-700">
-            <Button type="submit" isLoading={loading}>
+          <div className="flex items-center justify-end pt-8 border-t border-zinc-100 dark:border-zinc-800">
+            <Button
+              type="submit"
+              isLoading={loading}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 h-auto rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+            >
               Save Changes
             </Button>
           </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

@@ -109,36 +109,15 @@ async function GET(request) {
                 remaining: 0
             });
         }
-        // Debug logs to help diagnose why contacts aren't showing
-        try {
-            const dbHost = process.env.DATABASE_URL ? process.env.DATABASE_URL.split('@')[1]?.split('?')[0] : 'unknown';
-            console.log('contacts API - DB host:', dbHost);
-            console.log('contacts API - auth userId:', userId);
-        } catch (e) {
-            console.log('contacts API - debug log error', e);
-        }
         const { searchParams } = new URL(request.url);
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '10');
         const search = searchParams.get('search') || '';
         const viewed = searchParams.get('viewed') === 'true';
         const skip = (page - 1) * limit;
-        if (!userId) {
-            // Not authenticated: return empty list and 0 credits
-            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                contacts: [],
-                pagination: {
-                    page,
-                    limit,
-                    total: 0,
-                    pages: 1
-                },
-                remaining: 0
-            });
-        }
-        let whereClause = {};
+        let searchFilter = {};
         if (search) {
-            whereClause.OR = [
+            searchFilter.OR = [
                 {
                     name: {
                         contains: search,
@@ -165,54 +144,90 @@ async function GET(request) {
                 }
             ];
         }
-        // Filter by view status for authenticated user
+        let contactsWithViewStatus = [];
+        let total = 0;
         if (viewed) {
-            whereClause.views = {
-                some: {
-                    clerkUserId: userId
-                }
-            };
-        } else {
-            whereClause.views = {
-                none: {
-                    clerkUserId: userId
-                }
-            };
-        }
-        const [contacts, total] = await Promise.all([
-            __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].contact.findMany({
-                where: whereClause,
-                include: {
-                    views: {
-                        where: {
-                            clerkUserId: userId
-                        },
-                        select: {
-                            viewedAt: true
-                        }
+            // If fetching VIEWED contacts, query ContactView directly to sort by viewedAt
+            const [views, count] = await Promise.all([
+                __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].contactView.findMany({
+                    where: {
+                        clerkUserId: userId,
+                        contact: search ? searchFilter : undefined
+                    },
+                    include: {
+                        contact: true
+                    },
+                    skip,
+                    take: limit,
+                    orderBy: {
+                        viewedAt: 'desc'
                     }
-                },
-                skip,
-                take: limit,
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            }),
-            __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].contact.count({
-                where: whereClause
-            })
-        ]);
-        const contactsWithViewStatus = contacts.map((contact)=>({
-                id: contact.id,
-                name: contact.name,
-                email: contact.email,
-                phone: contact.phone,
-                agency: contact.agency,
-                position: contact.position,
-                department: contact.department,
-                isViewed: contact.views.length > 0,
-                viewedAt: contact.views[0]?.viewedAt?.toISOString() || null
-            }));
+                }),
+                __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].contactView.count({
+                    where: {
+                        clerkUserId: userId,
+                        contact: search ? searchFilter : undefined
+                    }
+                })
+            ]);
+            total = count;
+            contactsWithViewStatus = views.map((view)=>({
+                    id: view.contact.id,
+                    name: view.contact.name,
+                    email: view.contact.email,
+                    phone: view.contact.phone,
+                    agency: view.contact.agency,
+                    position: view.contact.position,
+                    department: view.contact.department,
+                    isViewed: true,
+                    viewedAt: view.viewedAt.toISOString()
+                }));
+        } else {
+            // If fetching UNVIEWED contacts, query Contact model
+            const whereClause = {
+                ...searchFilter,
+                views: {
+                    none: {
+                        clerkUserId: userId
+                    }
+                } // Filter out viewed contacts
+            };
+            const [contacts, count] = await Promise.all([
+                __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].contact.findMany({
+                    where: whereClause,
+                    include: {
+                        views: {
+                            where: {
+                                clerkUserId: userId
+                            },
+                            select: {
+                                viewedAt: true
+                            }
+                        }
+                    },
+                    skip,
+                    take: limit,
+                    orderBy: {
+                        createdAt: 'desc'
+                    }
+                }),
+                __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].contact.count({
+                    where: whereClause
+                })
+            ]);
+            total = count;
+            contactsWithViewStatus = contacts.map((contact)=>({
+                    id: contact.id,
+                    name: contact.name,
+                    email: contact.email,
+                    phone: contact.phone,
+                    agency: contact.agency,
+                    position: contact.position,
+                    department: contact.department,
+                    isViewed: false,
+                    viewedAt: null
+                }));
+        }
         // Get user profile to check remaining credits
         let remaining = 50;
         let userProfile = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].userProfile.findUnique({

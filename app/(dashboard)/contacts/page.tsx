@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 // Clerk removed - auth disabled
-import { Card } from "@/components/UI";
+
 import { Button } from "@/components/UI";
 import {
   Eye,
@@ -36,7 +37,16 @@ interface Pagination {
 
 export default function ContactsPage() {
   // Auth disabled
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'viewed' | 'unviewed'>('unviewed');
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'viewed' || tabParam === 'unviewed') {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -189,16 +199,16 @@ export default function ContactsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
-          <p className="text-gray-500 dark:text-gray-400">Access contact details of your network</p>
-          <p className="text-sm text-gray-400 dark:text-gray-500">
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Contacts</h1>
+          <p className="text-zinc-500 dark:text-zinc-400">Access contact details of your network</p>
+          <p className="text-sm text-zinc-400 dark:text-zinc-500">
             Showing {startIndex + 1}-{Math.min(endIndex, pagination.total)} of {pagination.total} contacts (Page {currentPage} of {totalPages})
           </p>
         </div>
 
         <div className="flex flex-col items-end gap-2">
           <div className="flex flex-col items-end">
-            <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'}`}>
+            <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-zinc-600 dark:text-zinc-400'}`}>
               Credits Remaining: {remaining}
             </span>
             {remaining === 0 && (
@@ -207,7 +217,7 @@ export default function ContactsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 text-left">
                       <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">You have used all your credits</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Credits reset daily at 00:00 AM. To continue revealing contacts now, upgrade your plan.</p>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Credits reset daily at 00:00 AM. To continue revealing contacts now, upgrade your plan.</p>
                     </div>
                     <div className="flex-shrink-0 flex items-center">
                       <Link href="/upgrade" className="inline-block px-3 py-1.5 bg-primary-600 text-white text-xs rounded-md hover:bg-primary-500">
@@ -228,12 +238,12 @@ export default function ContactsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg w-fit">
+      <div className="flex space-x-1 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg w-fit">
         <button
           onClick={() => handleTabChange('unviewed')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'unviewed'
-            ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm'
-            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            ? 'bg-white dark:bg-zinc-800 text-primary-600 dark:text-primary-400 shadow-sm'
+            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
             }`}
         >
           <Users size={16} />
@@ -242,8 +252,8 @@ export default function ContactsPage() {
         <button
           onClick={() => handleTabChange('viewed')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'viewed'
-            ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm'
-            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            ? 'bg-white dark:bg-zinc-800 text-primary-600 dark:text-primary-400 shadow-sm'
+            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
             }`}
         >
           <UserCheck size={16} />
@@ -258,32 +268,32 @@ export default function ContactsPage() {
           placeholder="Search contacts..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+          className="flex-1 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
         />
       </div>
 
-      <Card className="overflow-hidden">
+      <div className="overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
+          <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+            <thead className="bg-zinc-50 dark:bg-zinc-950">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Job Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Department</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Contact Info</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Action</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Job Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Department</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Contact Info</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-800">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={5} className="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">
                     Loading contacts...
                   </td>
                 </tr>
               ) : contacts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={5} className="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">
                     {activeTab === 'viewed' ? 'No contacts viewed yet' : 'No unviewed contacts available'}
                   </td>
                 </tr>
@@ -291,25 +301,25 @@ export default function ContactsPage() {
                 contacts.map((contact) => {
                   const isViewed = contact.isViewed;
                   return (
-                    <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                    <tr key={contact.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
                         {contact.name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                         {contact.position}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                         {contact.department}
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm">
                           {isViewed ? (
                             <div className="space-y-1">
-                              <p className="text-gray-900 dark:text-white select-all">{contact.email}</p>
-                              <p className="text-gray-500 dark:text-gray-400 select-all">{contact.phone}</p>
+                              <p className="text-zinc-900 dark:text-white select-all">{contact.email}</p>
+                              <p className="text-zinc-500 dark:text-zinc-400 select-all">{contact.phone}</p>
                             </div>
                           ) : (
-                            <div className="flex items-center text-gray-400">
+                            <div className="flex items-center text-zinc-400">
                               <span className="tracking-widest">••••••••••••••••</span>
                             </div>
                           )}
@@ -342,11 +352,11 @@ export default function ContactsPage() {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <Card className="p-4">
+        <div className="p-4 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
@@ -407,10 +417,10 @@ export default function ContactsPage() {
               <ChevronRight size={16} />
             </Button>
           </div>
-        </Card>
+        </div>
       )}
 
-      <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-600 mt-4">
+      <div className="flex items-center justify-center gap-2 text-xs text-zinc-400 dark:text-zinc-600 mt-4">
         <AlertTriangle size={12} />
         <span>Clicking "View" will consume 1 credit and move contact to viewed section.</span>
       </div>

@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSignIn } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { Card } from '../../../components/UI';
+import { Button } from '../../../components/UI';
 import { APP_NAME } from '../../../constants';
-import { Sun, Moon, LogIn, ArrowLeft } from 'lucide-react';
+import { Sun, Moon, LogIn } from 'lucide-react';
 
 export default function Login() {
   const { signIn, isLoaded } = useSignIn();
@@ -59,33 +59,41 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 relative">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#09090b] relative transition-colors duration-300 overflow-hidden">
+      {/* Background Pattern - Square Grid */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.4] dark:opacity-[0.1]"
+        style={{
+          backgroundImage: `linear-gradient(#CCCFD6 1px, transparent 1px), linear-gradient(to right, #CCCFD6 1px, transparent 1px)`,
+          backgroundSize: '32px 32px'
+        }}>
+      </div>
+
       <button
         onClick={toggleTheme}
-        className="absolute top-4 right-4 p-3 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 transition-all duration-200 shadow-lg"
+        className="absolute top-6 right-6 p-3 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-200 shadow-md z-50"
       >
         {isDark ? <Sun size={20} /> : <Moon size={20} />}
       </button>
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative z-10 px-4">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 mb-4">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mb-4 tracking-tight">
             {APP_NAME}
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
+          <p className="text-zinc-600 dark:text-zinc-400 text-lg">
             Welcome back! Sign in to continue
           </p>
         </div>
 
-        <Card className="p-8 shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+        <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-lg bg-gradient-to-br from-blue-400 to-blue-600">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-lg bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600">
               <LogIn size={32} className="text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
               Sign In
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-zinc-600 dark:text-zinc-400">
               Access your dashboard and continue where you left off
             </p>
           </div>
@@ -106,7 +114,7 @@ export default function Login() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading || !isLoaded}
-            className="w-full flex items-center justify-center gap-4 px-6 py-4 rounded-xl text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+            className="w-full flex items-center justify-center gap-4 px-6 py-4 rounded-xl text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-blue-500/25"
           >
             {loading ? (
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
@@ -125,25 +133,25 @@ export default function Login() {
 
           <div className="mt-8 space-y-4">
             <div className="flex items-center justify-center">
-              <div className="h-px bg-gray-200 dark:bg-gray-600 flex-1"></div>
-              <span className="px-4 text-sm text-gray-500 dark:text-gray-400 font-medium">or</span>
-              <div className="h-px bg-gray-200 dark:bg-gray-600 flex-1"></div>
+              <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></div>
+              <span className="px-4 text-sm text-zinc-500 dark:text-zinc-500 font-medium">or</span>
+              <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></div>
             </div>
 
             <a
               href="/auth/register"
-              className="w-full text-sm font-semibold py-3 px-4 rounded-xl border-2 border-green-200 text-green-600 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/20 transition-all duration-200 block text-center"
+              className="w-full text-sm font-semibold py-3 px-4 rounded-xl border-2 border-green-200 text-green-600 hover:bg-green-50 dark:border-green-900/50 dark:text-green-400 dark:hover:bg-green-900/20 transition-all duration-200 block text-center"
             >
               Don't have an account? Create one here
             </a>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center leading-relaxed">
+          <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+            <p className="text-xs text-zinc-500 dark:text-zinc-500 text-center leading-relaxed">
               By continuing, you agree to our Terms of Service and Privacy Policy.
             </p>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );
