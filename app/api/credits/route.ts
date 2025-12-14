@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       // Get user data from Clerk to save firstName and lastName
       const client = await clerkClient();
       const user = await client.users.getUser(userId);
-      
+
       userProfile = await prisma.userProfile.create({
         data: {
           clerkUserId: userId,
@@ -38,10 +38,10 @@ export async function GET(request: NextRequest) {
       // Check if user needs daily reset at 11:00 PM server time (on my time is 00:00 AM)
       const lastReset = userProfile.lastResetDate ? new Date(userProfile.lastResetDate) : null;
       const now = new Date();
-      
+
       // Only reset if:
       const shouldReset = !lastReset || (now >= todayReset && lastReset < todayReset);
-      
+
       if (shouldReset) {
         userProfile = await prisma.userProfile.update({
           where: { clerkUserId: userId },

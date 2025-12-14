@@ -128,6 +128,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/api/contacts/[contactId]/view/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/contacts/[contactId]/view">> = Specific
+  const handler = {} as typeof import("../../../app/api/contacts/[contactId]/view/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/api/contacts/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/contacts">> = Specific
@@ -177,6 +186,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/profile">> = Specific
   const handler = {} as typeof import("../../../app/api/profile/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/webhooks/clerk/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhooks/clerk">> = Specific
+  const handler = {} as typeof import("../../../app/api/webhooks/clerk/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

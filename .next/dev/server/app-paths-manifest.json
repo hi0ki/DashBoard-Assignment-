@@ -1,3 +1,10 @@
 {
-  "/_not-found/page": "app/_not-found/page.js"
+  "/(dashboard)/contacts/page": "app/(dashboard)/contacts/page.js",
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(dashboard)/profile/page": "app/(dashboard)/profile/page.js",
+  "/api/contacts/[contactId]/view/route": "app/api/contacts/[contactId]/view/route.js",
+  "/api/contacts/route": "app/api/contacts/route.js",
+  "/api/credits/route": "app/api/credits/route.js",
+  "/api/dashboard/stats/route": "app/api/dashboard/stats/route.js",
+  "/auth/login/page": "app/auth/login/page.js"
 }

@@ -26,28 +26,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider
-      appearance={{
-        elements: {
-          formButtonPrimary: 'text-white',
-          card: 'shadow-none',
-        },
-      }}
-      localization={{
-        signUp: {
-          start: {
-            title: 'Sign in or create account',
-            subtitle: 'Checking your account...',
-          }
-        },
-        signIn: {
-          start: {
-            title: 'Sign in',
-            subtitle: 'Verifying your account...',
-          }
-        }
-      }}
-    >
+    <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           {children}

@@ -19,45 +19,20 @@ var _s = __turbopack_context__.k.signature();
 function Home() {
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
-    const { user, isLoaded, isSignedIn } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$clerk$2f$shared$2f$dist$2f$runtime$2f$organization$2d$DsA9O7QJ$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useUser"])();
-    const [hasRedirected, setHasRedirected] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const { isLoaded, isSignedIn } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$clerk$2f$shared$2f$dist$2f$runtime$2f$organization$2d$DsA9O7QJ$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useUser"])();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Home.useEffect": ()=>{
-            if (isLoaded && !hasRedirected) {
-                setHasRedirected(true);
-                if (isSignedIn && user) {
-                    // User is authenticated, go to dashboard
+            if (isLoaded) {
+                if (isSignedIn) {
                     router.replace('/dashboard');
                 } else {
-                    // User is not authenticated, go to unified auth page
-                    router.replace('/auth');
+                    router.replace('/auth/login');
                 }
             }
         }
     }["Home.useEffect"], [
         isLoaded,
         isSignedIn,
-        user,
-        router,
-        hasRedirected
-    ]);
-    // Fallback redirect after 5 seconds if auth check takes too long
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "Home.useEffect": ()=>{
-            const timeout = setTimeout({
-                "Home.useEffect.timeout": ()=>{
-                    if (!hasRedirected) {
-                        setHasRedirected(true);
-                        router.replace('/auth');
-                    }
-                }
-            }["Home.useEffect.timeout"], 5000);
-            return ({
-                "Home.useEffect": ()=>clearTimeout(timeout)
-            })["Home.useEffect"];
-        }
-    }["Home.useEffect"], [
-        hasRedirected,
         router
     ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -69,30 +44,30 @@ function Home() {
                     className: "animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
                 }, void 0, false, {
                     fileName: "[project]/app/page.jsx",
-                    lineNumber: 41,
+                    lineNumber: 23,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     className: "text-gray-600 dark:text-gray-400",
-                    children: "Redirecting..."
+                    children: "Loading..."
                 }, void 0, false, {
                     fileName: "[project]/app/page.jsx",
-                    lineNumber: 42,
+                    lineNumber: 24,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/page.jsx",
-            lineNumber: 40,
+            lineNumber: 22,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/page.jsx",
-        lineNumber: 39,
+        lineNumber: 21,
         columnNumber: 5
     }, this);
 }
-_s(Home, "SFAaAwdjmm5ETtan3KlgE7S8mXU=", false, function() {
+_s(Home, "le625Pa58qs/fz5D84q+GugdKps=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$clerk$2f$shared$2f$dist$2f$runtime$2f$organization$2d$DsA9O7QJ$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useUser"]

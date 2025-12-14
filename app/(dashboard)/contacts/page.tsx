@@ -1,15 +1,15 @@
- 'use client'
+'use client'
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useUser } from "@clerk/nextjs";
+// Clerk removed - auth disabled
 import { Card } from "@/components/UI";
 import { Button } from "@/components/UI";
-import { 
-  Eye, 
-  EyeOff, 
-  Users, 
-  UserCheck, 
+import {
+  Eye,
+  EyeOff,
+  Users,
+  UserCheck,
   AlertTriangle,
   ChevronLeft,
   ChevronRight
@@ -35,7 +35,7 @@ interface Pagination {
 }
 
 export default function ContactsPage() {
-  const { user: clerkUser } = useUser();
+  // Auth disabled
   const [activeTab, setActiveTab] = useState<'viewed' | 'unviewed'>('unviewed');
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,8 +51,8 @@ export default function ContactsPage() {
   });
 
   const loadContacts = async (tab: 'viewed' | 'unviewed', page: number = 1) => {
-    if (!clerkUser?.id) return;
-    
+    // Auth check removed
+
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -60,7 +60,7 @@ export default function ContactsPage() {
         limit: '15',
         viewed: (tab === 'viewed').toString()
       });
-      
+
       if (search.trim()) {
         params.append('search', search.trim());
       }
@@ -75,10 +75,10 @@ export default function ContactsPage() {
       } catch (e) {
         console.log('Could not get Clerk token, relying on cookies');
       }
-      
+
       const response = await fetch(`/api/contacts?${params}`, { headers });
       const data = await response.json();
-      
+
       if (response.ok) {
         setContacts(data.contacts);
         setPagination(data.pagination);
@@ -100,12 +100,12 @@ export default function ContactsPage() {
 
   // Load user credits directly from database
   const loadUserCredits = async () => {
-    if (!clerkUser?.id) return;
-    
+    // Auth check removed
+
     try {
       const response = await fetch('/api/credits');
       const data = await response.json();
-      
+
       if (response.ok) {
         setRemaining(data.remaining);
       }
@@ -114,28 +114,26 @@ export default function ContactsPage() {
     }
   };
 
-  // Load credits immediately when user is available
+  // Load credits immediately
   useEffect(() => {
-    if (clerkUser?.id) {
-      loadUserCredits();
-    }
-  }, [clerkUser?.id]);
+    loadUserCredits();
+  }, []);
 
   const handleViewContact = async (contactId: string) => {
     try {
       const response = await fetch(`/api/contacts/${contactId}/view`, {
         method: 'POST'
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         setRemaining(data.remaining || 0);
-        
+
         // Update the contact in the current list to show as viewed
-        setContacts(prevContacts => 
-          prevContacts.map(contact => 
-            contact.id === contactId 
+        setContacts(prevContacts =>
+          prevContacts.map(contact =>
+            contact.id === contactId
               ? { ...contact, isViewed: true, viewedAt: data.viewedAt }
               : contact
           )
@@ -163,8 +161,8 @@ export default function ContactsPage() {
 
   // Load contacts and credits when tab, user, or search changes
   useEffect(() => {
-    if (!clerkUser?.id) return;
-    
+    // Auth check removed
+
     const timer = setTimeout(() => {
       setCurrentPage(1);
       loadContacts(activeTab, 1);
@@ -173,7 +171,7 @@ export default function ContactsPage() {
     }, search ? 500 : 0); // Debounce only for search
 
     return () => clearTimeout(timer);
-  }, [clerkUser, activeTab, search]);
+  }, [activeTab, search]);
 
   const totalPages = pagination.pages;
   const startIndex = (currentPage - 1) * pagination.limit;
@@ -197,7 +195,7 @@ export default function ContactsPage() {
             Showing {startIndex + 1}-{Math.min(endIndex, pagination.total)} of {pagination.total} contacts (Page {currentPage} of {totalPages})
           </p>
         </div>
-        
+
         <div className="flex flex-col items-end gap-2">
           <div className="flex flex-col items-end">
             <span className={`text-sm font-medium px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm ${remaining < 10 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'}`}>
@@ -233,22 +231,20 @@ export default function ContactsPage() {
       <div className="flex space-x-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg w-fit">
         <button
           onClick={() => handleTabChange('unviewed')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
-            activeTab === 'unviewed'
-              ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-          }`}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'unviewed'
+            ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm'
+            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
         >
           <Users size={16} />
           Unviewed
         </button>
         <button
           onClick={() => handleTabChange('viewed')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
-            activeTab === 'viewed'
-              ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-          }`}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'viewed'
+            ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm'
+            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
         >
           <UserCheck size={16} />
           Viewed
@@ -320,7 +316,7 @@ export default function ContactsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <Button 
+                        <Button
                           variant={isViewed ? "outline" : "primary"}
                           className={`text-xs px-3 py-1.5 h-auto ${isViewed ? 'cursor-default opacity-75' : ''}`}
                           onClick={() => handleViewContact(contact.id)}
@@ -347,7 +343,7 @@ export default function ContactsPage() {
           </table>
         </div>
       </Card>
-      
+
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <Card className="p-4">
@@ -361,7 +357,7 @@ export default function ContactsPage() {
               <ChevronLeft size={16} />
               Previous
             </Button>
-            
+
             <div className="flex items-center gap-2">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 let pageNum;
@@ -374,7 +370,7 @@ export default function ContactsPage() {
                 } else {
                   pageNum = currentPage - 2 + i;
                 }
-                
+
                 return (
                   <Button
                     key={pageNum}
@@ -386,7 +382,7 @@ export default function ContactsPage() {
                   </Button>
                 );
               })}
-              
+
               {totalPages > 5 && currentPage < totalPages - 2 && (
                 <>
                   <span className="text-gray-500">...</span>
@@ -400,7 +396,7 @@ export default function ContactsPage() {
                 </>
               )}
             </div>
-            
+
             <Button
               variant="outline"
               onClick={() => handlePageChange(currentPage + 1)}
@@ -413,7 +409,7 @@ export default function ContactsPage() {
           </div>
         </Card>
       )}
-      
+
       <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-600 mt-4">
         <AlertTriangle size={12} />
         <span>Clicking "View" will consume 1 credit and move contact to viewed section.</span>

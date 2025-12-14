@@ -4,9 +4,15 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    let userId: string | null = null;
-    const { userId: clerkUserId } = await auth();
-    if (clerkUserId) userId = clerkUserId;
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({
+        contacts: [],
+        pagination: { page: 1, limit: 10, total: 0, pages: 0 },
+        remaining: 0
+      });
+    }
 
     // Debug logs to help diagnose why contacts aren't showing
     try {
@@ -78,7 +84,7 @@ export async function GET(request: NextRequest) {
     // Get user profile to check remaining credits
     let remaining = 50;
     let userProfile = await prisma.userProfile.findUnique({ where: { clerkUserId: userId } });
-    
+
     // If no user profile exists, create one with default 50 remaining
     if (!userProfile) {
       try {

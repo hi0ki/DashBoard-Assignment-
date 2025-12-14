@@ -2,14 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card } from '../../../components/UI';
-// 🔑 FIX 1: Import useAuth for reliable token fetching
-import { useUser, useAuth } from '@clerk/nextjs'; 
 import { Users, Building2, TrendingUp } from 'lucide-react';
 
 const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any) => {
   const isPositive = changeType === 'positive';
   const isNegative = changeType === 'negative';
-  
+
   return (
     <Card className="p-6 flex flex-col justify-between h-full">
       <div className="flex justify-between items-start mb-4">
@@ -18,15 +16,14 @@ const StatCard = ({ title, value, change, changeType, icon: Icon, subtext }: any
           <Icon size={20} />
         </div>
       </div>
-      
+
       <div>
         <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{value}</h3>
         <div className="flex items-center text-sm">
           {change && (
-            <span className={`font-medium ${
-              isPositive ? 'text-green-600 dark:text-green-400' : 
+            <span className={`font-medium ${isPositive ? 'text-green-600 dark:text-green-400' :
               isNegative ? 'text-red-600 dark:text-red-400' : 'text-gray-500'
-            } mr-2`}>
+              } mr-2`}>
               {change}
             </span>
           )}
@@ -48,47 +45,21 @@ interface DashboardStats {
 }
 
 export default function Dashboard() {
-  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
-  // 🔑 FIX 2: Destructure getToken and isLoaded from useAuth
-  const { getToken, isLoaded: isAuthLoaded } = useAuth();
-  
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string>('');
-  
-  // Combine readiness checks
-  const isClerkReady = isUserLoaded && isAuthLoaded; 
 
   useEffect(() => {
     const loadDashboardData = async () => {
-      // 🛑 FIX 3: Guard the fetch call until Clerk is fully loaded AND a user is present
-      if (!isClerkReady || !clerkUser?.id) {
-          if (isClerkReady && !clerkUser?.id) {
-              setLoading(false);
-          }
-          return;
-      }
-      
       try {
-        // 🔑 FIX 4: Use the official and reliable getToken method
-        const token = await getToken();
-        
-        const headers: HeadersInit = token 
-          ? { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}` 
-            }
-          : { 'Content-Type': 'application/json' };
+        const response = await fetch('/api/dashboard/stats');
 
-        // 🛑 FIX 5: Add credentials: 'include' to ensure cookies are sent (crucial for localhost)
-        const response = await fetch('/api/dashboard/stats', { headers, credentials: 'include' });
-        
         if (!response.ok) {
           const text = await response.text();
           console.error('Dashboard stats response error:', response.status, text);
           throw new Error(`Failed to fetch dashboard stats: ${response.status} ${text}`);
         }
-        
+
         const data: DashboardStats = await response.json();
         setStats(data);
       } catch (error) {
@@ -100,8 +71,7 @@ export default function Dashboard() {
     };
 
     loadDashboardData();
-    // 🔑 FIX 6: Include all dependencies, including the readiness state
-  }, [clerkUser?.id, getToken, isClerkReady]);
+  }, []);
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -115,37 +85,35 @@ export default function Dashboard() {
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Welcome back, {clerkUser?.firstName && clerkUser?.lastName 
-            ? `${clerkUser.firstName} ${clerkUser.lastName}` 
-            : clerkUser?.firstName || clerkUser?.username || 'User'}
+          Welcome back!
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <StatCard 
-          title="Tracked Agencies" 
-          value={loading || !stats ? "..." : stats.agencies} 
-          change="+4" 
+        <StatCard
+          title="Tracked Agencies"
+          value={loading || !stats ? "..." : stats.agencies}
+          change="+4"
           changeType="positive"
           subtext="new regions"
-          icon={Building2} 
+          icon={Building2}
         />
-        <StatCard 
-          title="Total Contacts" 
-          value={loading || !stats ? "..." : stats.contacts.toLocaleString()} 
-          change="+150" 
+        <StatCard
+          title="Total Contacts"
+          value={loading || !stats ? "..." : stats.contacts.toLocaleString()}
+          change="+150"
           changeType="positive"
           subtext="available leads"
-          icon={Users} 
+          icon={Users}
         />
-        <StatCard 
-          title="Daily API Usage" 
-          value={loading || !stats ? "..." : `${stats.usage.count}/${stats.usage.total}`} 
-          change="Resets Daily" 
+        <StatCard
+          title="Daily API Usage"
+          value={loading || !stats ? "..." : `${stats.usage.count}/${stats.usage.total}`}
+          change="Resets Daily"
           changeType="neutral"
           subtext="view limit"
-          icon={TrendingUp} 
+          icon={TrendingUp}
         />
       </div>
       {errorMsg && (
@@ -171,14 +139,14 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-100 dark:bg-gray-700">
-            <div 
-              style={{ width: stats ? `${Math.min(100, (stats.usage.count / stats.usage.total) * 100)}%` : '0%' }} 
+            <div
+              style={{ width: stats ? `${Math.min(100, (stats.usage.count / stats.usage.total) * 100)}%` : '0%' }}
               className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ${stats && stats.usage.count >= stats.usage.total ? 'bg-red-500' : 'bg-primary-500'}`}
             ></div>
           </div>
           <p className="text-sm text-gray-500">
-            {!stats ? 'Loading...' : stats.usage.count >= stats.usage.total 
-              ? "You have reached your daily limit. Please come back tomorrow." 
+            {!stats ? 'Loading...' : stats.usage.count >= stats.usage.total
+              ? "You have reached your daily limit. Please come back tomorrow."
               : `You can view details for ${stats.usage.remaining} more contacts today.`}
           </p>
         </div>
